@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import ChatView from "./components/chat/ChatView"
 import HistoryView from "./components/history/HistoryView"
 import SettingsView from "./components/settings/SettingsView"
@@ -13,14 +13,14 @@ import { Boolean, EmptyRequest } from "@shared/proto/common"
 // Get the display context from the window global
 declare global {
 	interface Window {
-		IS_IN_SIDEBAR?: boolean;
+		IS_IN_SIDEBAR?: boolean
 	}
 }
 
 const AppContent = () => {
 	const {
 		didHydrateState,
-		showWelcome,
+		showWelcome: originalShowWelcome,
 		shouldShowAnnouncement,
 		showMcp,
 		mcpTab,
@@ -37,6 +37,12 @@ const AppContent = () => {
 		hideAccount,
 		hideAnnouncement,
 	} = useExtensionState()
+
+	// Check if we're in the sidebar or tab
+	const isInSidebar = window.IS_IN_SIDEBAR === true
+
+	// In tab view, always show chat (not welcome)
+	const showWelcome = isInSidebar ? false : false
 
 	useEffect(() => {
 		if (shouldShowAnnouncement) {
@@ -57,43 +63,32 @@ const AppContent = () => {
 		return null
 	}
 
-	// Check if we're in the sidebar or tab
-	const isInSidebar = window.IS_IN_SIDEBAR === true;
-
-	// For demonstration purposes, show only settings in the sidebar
+	// Always show settings in the sidebar
 	if (isInSidebar) {
 		return (
 			<div className="alt-ui-container">
-				<div className="alt-ui-header">
-					<h1>Cline Alt UI (Sidebar)</h1>
-				</div>
 				<SettingsView onDone={() => {}} />
 			</div>
-		);
+		)
 	}
 
+	// In tab view, show chat UI with any overlays
 	return (
 		<>
-			{showWelcome ? (
-				<WelcomeView />
-			) : (
-				<>
-					<div className="alt-ui-header">
-						<h1>Cline Alt UI (Tab)</h1>
-					</div>
-					{showSettings && <SettingsView onDone={hideSettings} />}
-					{showHistory && <HistoryView onDone={hideHistory} />}
-					{showMcp && <McpView initialTab={mcpTab} onDone={closeMcpView} />}
-					{showAccount && <AccountView onDone={hideAccount} />}
-					{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
-					<ChatView
-						showHistoryView={navigateToHistory}
-						isHidden={showSettings || showHistory || showMcp || showAccount}
-						showAnnouncement={showAnnouncement}
-						hideAnnouncement={hideAnnouncement}
-					/>
-				</>
-			)}
+			<div className="alt-ui-header">
+				<h1>Cline Chat</h1>
+			</div>
+			{showSettings && <SettingsView onDone={hideSettings} />}
+			{showHistory && <HistoryView onDone={hideHistory} />}
+			{showMcp && <McpView initialTab={mcpTab} onDone={closeMcpView} />}
+			{showAccount && <AccountView onDone={hideAccount} />}
+			{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
+			<ChatView
+				showHistoryView={navigateToHistory}
+				isHidden={showSettings || showHistory || showMcp || showAccount}
+				showAnnouncement={showAnnouncement}
+				hideAnnouncement={hideAnnouncement}
+			/>
 		</>
 	)
 }

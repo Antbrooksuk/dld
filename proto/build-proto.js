@@ -182,7 +182,7 @@ export {
 	${serviceExports.join(",\n\t")}
 }`
 
-	const configPath = path.join(ROOT_DIR, "webview-ui", "src", "services", "grpc-client.ts")
+	const configPath = path.join(ROOT_DIR, "webview-ui-alt", "src", "services", "grpc-client.ts")
 	await fs.writeFile(configPath, content)
 	console.log(chalk.green(`Generated gRPC client at ${configPath}`))
 }

@@ -28,6 +28,14 @@ webview-ui/README.md
 webview-ui/package.json
 webview-ui/package-lock.json
 webview-ui/node_modules/**
+
+webview-ui-alt/src/**
+webview-ui-alt/public/**
+webview-ui-alt/index.html
+webview-ui-alt/README.md
+webview-ui-alt/package.json
+webview-ui-alt/package-lock.json
+webview-ui-alt/node_modules/**
 **/.gitignore
 
 # Ignore docs

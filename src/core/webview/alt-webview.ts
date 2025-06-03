@@ -6,6 +6,7 @@ import { Controller } from "@core/controller/index"
 import { findLast } from "@shared/array"
 import { readFile } from "fs/promises"
 import path from "node:path"
+import axios from "axios"
 
 /**
  * TODO:
@@ -35,7 +36,12 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
         this.controller = new Controller(
             context, 
             outputChannel, 
-            (message) => this.webviewView?.webview.postMessage(message)
+            (message) => {
+                if (this.view) {
+                    return this.view.webview.postMessage(message);
+                }
+                return undefined;
+            }
         )
         AltWebviewProvider.activeInstances.add(this)
     }
@@ -115,31 +121,34 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
         }
         
         // Set the HTML content
-        const html = await this.getHtmlForWebview(webview)
+        let html;
+        if (process.env.IS_DEV) {
+            html = await this.getHMRHtmlContent(webview);
+        } else {
+            html = await this.getHtmlForWebview(webview);
+        }
         webview.html = html
         
-        // Handle messages from the webview
-        webview.onDidReceiveMessage(
-            message => {
-                console.log("Message received from webview:", message)
-                this.outputChannel.appendLine("Message received from webview: " + JSON.stringify(message))
-                
-                switch (message.type) {
-                    case 'ready':
-                        // Webview is ready, send a response
-                        webview.postMessage({ type: 'response', text: 'Extension received your message' })
-                        // Send different initialization based on sidebar status
-                        if (this.isInSidebar) {
-                            webview.postMessage({ type: 'action', action: 'settingsButtonClicked' })
-                        } else {
-                            webview.postMessage({ type: 'action', action: 'chatButtonClicked' })
-                        }
-                        break
-                }
-            },
-            undefined,
-            this.disposables
-        )
+        // Set up the message listener
+        this.setWebviewMessageListener(webview)
+        
+        // Handle initial setup based on view type
+        this.initializeViewContent(webview)
+    }
+    
+    /**
+     * Initialize the appropriate content based on view type
+     * @param webview The webview to initialize
+     */
+    private initializeViewContent(webview: vscode.Webview): void {
+        // Wait a short time to ensure the webview is ready
+        setTimeout(() => {
+            console.log(`Initializing ${this.isInSidebar ? 'sidebar' : 'tab'} view content`)
+            this.outputChannel.appendLine(`Initializing ${this.isInSidebar ? 'sidebar' : 'tab'} view content`)
+            
+            // The React app will read window.IS_IN_SIDEBAR to determine which view to show
+            // We don't need to send any initialization messages as the React app handles this
+        }, 500) // Short delay to ensure webview is ready
     }
 
     /**
@@ -171,7 +180,6 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
      * @returns The HTML content
      */
     public async getHtmlForWebview(webview: vscode.Webview): Promise<string> {
-        // For debugging, use a simple HTML content
         console.log("getHtmlForWebview called, isInSidebar:", this.isInSidebar)
         this.outputChannel.appendLine("getHtmlForWebview called, isInSidebar: " + this.isInSidebar)
         
@@ -181,47 +189,125 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
         // Get the current isInSidebar value
         const isInSidebar = this.isInSidebar
         
+        // Get the URI to the webview-ui-alt directory
+        const webviewUri = getUri(webview, this.context.extensionUri, ["webview-ui-alt", "build"])
+        
+        // Get the URI to the index.js file - adjust the path based on your build output
+        const scriptUri = getUri(webview, this.context.extensionUri, ["webview-ui-alt", "build", "assets", "index.js"])
+        
+        // Get the URI to the index.css file - adjust the path based on your build output
+        const styleUri = getUri(webview, this.context.extensionUri, ["webview-ui-alt", "build", "assets", "index.css"])
+        
+        // Get the theme from VS Code
+        const theme = getTheme()
+        
+        // Create the HTML content
         return `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
-            <title>Cline Alt UI</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 20px;
-                    color: white;
-                    background-color: ${isInSidebar ? '#1e1e1e' : '#2d2d2d'};
-                }
-                h1 {
-                    color: ${isInSidebar ? '#0078d7' : '#00b7c3'};
-                }
-            </style>
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; font-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https:; connect-src https: wss:;">
+            <title>Cline ${isInSidebar ? 'Settings' : 'Chat'}</title>
+            
+            <link rel="stylesheet" type="text/css" href="${styleUri}">
             <script nonce="${nonce}">
-                const vscode = acquireVsCodeApi();
+                // Set the display context for the React app
                 window.IS_IN_SIDEBAR = ${isInSidebar};
-                
-                window.addEventListener('load', () => {
-                    document.getElementById('info').textContent = 'Is in sidebar: ' + window.IS_IN_SIDEBAR;
-                    document.getElementById('title').textContent = window.IS_IN_SIDEBAR ? 'Cline Settings (Sidebar)' : 'Cline Chat (Tab)';
-                    
-                    // Send a message to the extension
-                    vscode.postMessage({
-                        type: 'ready',
-                        text: 'Webview is ready'
-                    });
-                });
+                window.acquireVsCodeApi = acquireVsCodeApi;
             </script>
         </head>
-        <body>
-            <h1 id="title">Cline Alt UI - Debug</h1>
-            <p>This is a simple HTML content for debugging.</p>
-            <p id="info">Loading...</p>
+        <body class="${theme}">
+            <div id="root"></div>
+            <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
         </body>
         </html>`
+    }
+
+    /**
+     * Connects to the local Vite dev server to allow HMR, with fallback to the bundled assets
+     *
+     * @param webview A reference to the extension webview
+     * @returns A template string literal containing the HTML that should be
+     * rendered within the webview panel
+     */
+    private async getHMRHtmlContent(webview: vscode.Webview): Promise<string> {
+        const localPort = await this.getDevServerPort()
+        const localServerUrl = `localhost:${localPort}`
+
+        // Check if local dev server is running.
+        try {
+            await axios.get(`http://${localServerUrl}`)
+        } catch (error) {
+            vscode.window.showErrorMessage(
+                "Cline: Local webview-alt dev server is not running, HMR will not work. Please run 'npm run dev:webview' before launching the extension to enable HMR. Using bundled assets.",
+            )
+
+            return this.getHtmlForWebview(webview)
+        }
+
+        const nonce = getNonce()
+        const stylesUri = getUri(webview, this.context.extensionUri, ["webview-ui-alt", "build", "assets", "index.css"])
+        const codiconsUri = getUri(webview, this.context.extensionUri, [
+            "node_modules",
+            "@vscode",
+            "codicons",
+            "dist",
+            "codicon.css",
+        ])
+
+        const scriptEntrypoint = "src/main.tsx"
+        const scriptUri = `http://${localServerUrl}/${scriptEntrypoint}`
+
+        const reactRefresh = /*html*/ `
+            <script nonce="${nonce}" type="module">
+                import RefreshRuntime from "http://${localServerUrl}/@react-refresh"
+                RefreshRuntime.injectIntoGlobalHook(window)
+                window.$RefreshReg$ = () => {}
+                window.$RefreshSig$ = () => (type) => type
+                window.__vite_plugin_react_preamble_installed__ = true
+            </script>
+        `
+
+        const csp = [
+            "default-src 'none'",
+            `font-src ${webview.cspSource} data:`,
+            `style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
+            `img-src ${webview.cspSource} https: data:`,
+            `script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
+            `connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
+        ]
+
+        // Get the current isInSidebar value
+        const isInSidebar = this.isInSidebar
+        
+        // Get the theme from VS Code
+        const theme = getTheme()
+
+        return /*html*/ `
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <script src="http://localhost:8097"></script> 
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+                    <meta http-equiv="Content-Security-Policy" content="${csp.join("; ")}">
+                    <link rel="stylesheet" type="text/css" href="${stylesUri}">
+                    <link href="${codiconsUri}" rel="stylesheet" />
+                    <title>Cline ${isInSidebar ? 'Settings' : 'Chat'}</title>
+                    <script nonce="${nonce}">
+                        // Set the display context for the React app
+                        window.IS_IN_SIDEBAR = ${isInSidebar};
+                        window.acquireVsCodeApi = acquireVsCodeApi;
+                    </script>
+                </head>
+                <body class="${theme}">
+                    <div id="root"></div>
+                    ${reactRefresh}
+                    <script type="module" src="${scriptUri}"></script>
+                </body>
+            </html>
+        `
     }
 
     /**
@@ -230,6 +316,10 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
     private setWebviewMessageListener(webview: vscode.Webview) {
         webview.onDidReceiveMessage(
             (message) => {
+                console.log("Message received from webview:", message)
+                this.outputChannel.appendLine("Message received from webview: " + JSON.stringify(message))
+                
+                // Pass all messages to the controller
                 this.controller.handleWebviewMessage(message)
             },
             null,

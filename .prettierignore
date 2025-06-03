@@ -1,6 +1,7 @@
 dist/
 node_modules
 webview-ui/build/
+webview-ui-alt/build/
 *.md
 package-lock.json
 src/core/prompts/system.ts
