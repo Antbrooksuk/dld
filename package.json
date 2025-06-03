@@ -49,25 +49,25 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "claude-dev-ActivityBar",
-					"title": "Cline (⌘+')",
+					"id": "claude-dev-Alt-ActivityBar",
+					"title": "Cline",
 					"icon": "assets/icons/icon.svg",
 					"when": "isMac"
 				},
 				{
-					"id": "claude-dev-ActivityBar",
-					"title": "Cline (Ctrl+')",
+					"id": "claude-dev-Alt-ActivityBar",
+					"title": "Cline",
 					"icon": "assets/icons/icon.svg",
 					"when": "!isMac"
 				}
 			]
 		},
 		"views": {
-			"claude-dev-ActivityBar": [
+			"claude-dev-Alt-ActivityBar": [
 				{
 					"type": "webview",
-					"id": "claude-dev.SidebarProvider",
-					"name": ""
+					"id": "claude-dev.AltSidebarProvider",
+					"name": "Cline"
 				}
 			]
 		},
@@ -143,6 +143,19 @@
 				"command": "cline.improveCode",
 				"title": "Improve with Cline",
 				"category": "Cline"
+			},
+			{
+				"command": "cline.openAltInNewTab",
+				"title": "Open Alt UI In New Tab",
+				"category": "Cline"
+			},
+			{
+				"command": "claude-dev.openClineInNewTab",
+				"title": "Open Cline in New Tab"
+			},
+			{
+				"command": "claude-dev.openAltWebview",
+				"title": "Open Cline Alt in Tab"
 			}
 		],
 		"keybindings": [
@@ -172,64 +185,64 @@
 				{
 					"command": "cline.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "view == claude-dev.SidebarProvider"
+					"when": "view == claude-dev.AltSidebarProvider"
 				},
 				{
 					"command": "cline.mcpButtonClicked",
 					"group": "navigation@2",
-					"when": "view == claude-dev.SidebarProvider"
+					"when": "view == claude-dev.AltSidebarProvider"
 				},
 				{
 					"command": "cline.historyButtonClicked",
 					"group": "navigation@3",
-					"when": "view == claude-dev.SidebarProvider"
+					"when": "view == claude-dev.AltSidebarProvider"
 				},
 				{
 					"command": "cline.popoutButtonClicked",
 					"group": "navigation@4",
-					"when": "view == claude-dev.SidebarProvider"
+					"when": "view == claude-dev.AltSidebarProvider"
 				},
 				{
 					"command": "cline.accountButtonClicked",
 					"group": "navigation@5",
-					"when": "view == claude-dev.SidebarProvider"
+					"when": "view == claude-dev.AltSidebarProvider"
 				},
 				{
 					"command": "cline.settingsButtonClicked",
 					"group": "navigation@6",
-					"when": "view == claude-dev.SidebarProvider"
+					"when": "view == claude-dev.AltSidebarProvider"
 				}
 			],
 			"editor/title": [
 				{
 					"command": "cline.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "activeWebviewPanelId == claude-dev.TabPanelProvider"
+					"when": "activeWebviewPanelId == claude-dev.AltTabPanelProvider"
 				},
 				{
 					"command": "cline.mcpButtonClicked",
 					"group": "navigation@2",
-					"when": "activeWebviewPanelId == claude-dev.TabPanelProvider"
+					"when": "activeWebviewPanelId == claude-dev.AltTabPanelProvider"
 				},
 				{
 					"command": "cline.historyButtonClicked",
 					"group": "navigation@3",
-					"when": "activeWebviewPanelId == claude-dev.TabPanelProvider"
+					"when": "activeWebviewPanelId == claude-dev.AltTabPanelProvider"
 				},
 				{
 					"command": "cline.popoutButtonClicked",
 					"group": "navigation@4",
-					"when": "activeWebviewPanelId == claude-dev.TabPanelProvider"
+					"when": "activeWebviewPanelId == claude-dev.AltTabPanelProvider"
 				},
 				{
 					"command": "cline.accountButtonClicked",
 					"group": "navigation@5",
-					"when": "activeWebviewPanelId == claude-dev.TabPanelProvider"
+					"when": "activeWebviewPanelId == claude-dev.AltTabPanelProvider"
 				},
 				{
 					"command": "cline.settingsButtonClicked",
 					"group": "navigation@6",
-					"when": "activeWebviewPanelId == claude-dev.TabPanelProvider"
+					"when": "activeWebviewPanelId == claude-dev.AltTabPanelProvider"
 				}
 			],
 			"editor/context": [
@@ -287,10 +300,10 @@
 		"test:integration": "vscode-test",
 		"test:unit": "TS_NODE_PROJECT='./tsconfig.unit-test.json' mocha",
 		"test:coverage": "vscode-test --coverage",
-		"install:all": "npm install && cd webview-ui && npm install",
-		"dev:webview": "cd webview-ui && npm run dev",
-		"build:webview": "cd webview-ui && npm run build",
-		"test:webview": "cd webview-ui && npm run test",
+		"install:all": "npm install && cd webview-ui-alt && npm install",
+		"dev:webview": "cd webview-ui-alt && npm run dev",
+		"build:webview": "cd webview-ui-alt && npm run build",
+		"test:webview": "cd webview-ui-alt && npm run test",
 		"publish:marketplace": "vsce publish && ovsx publish",
 		"publish:marketplace:prerelease": "vsce publish --pre-release && ovsx publish --pre-release",
 		"prepare": "husky",
