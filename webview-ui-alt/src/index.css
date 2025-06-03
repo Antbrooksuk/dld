@@ -199,5 +199,86 @@ vscode-dropdown::part(listbox) {
 .alt-ui-header h1 {
 	font-size: 1.2rem;
 	margin: 0;
-	color: var(--vscode-editor-foreground);
+	font-weight: 600;
+}
+
+/* Split Screen Layout */
+.split-screen-container {
+	display: flex;
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+}
+
+.sandbox-area {
+	flex: 3; /* Takes up 3/4 of the screen */
+	background-color: var(--vscode-editor-background);
+	border-right: 1px solid var(--vscode-panel-border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.sandbox-label {
+	font-size: 1.5rem;
+	color: var(--vscode-descriptionForeground);
+	opacity: 0.7;
+	text-transform: lowercase;
+	font-weight: 300;
+	letter-spacing: 1px;
+}
+
+.chat-area {
+	flex: 1; /* Takes up 1/4 of the screen */
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	max-width: 25%;
+	position: relative;
+}
+
+/* Make sure ChatView fills its container */
+.chat-area > div:last-child {
+	flex: 1;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Ensure the chat input stays at the bottom */
+.chat-area .chat-input-container,
+.chat-area [class*="ChatTextArea"] {
+	margin-top: auto;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1200px) {
+	.sandbox-area {
+		flex: 2; /* Takes up 2/3 of the screen on smaller displays */
+	}
+	
+	.chat-area {
+		flex: 1; /* Takes up 1/3 of the screen on smaller displays */
+		max-width: 33.333%;
+	}
+}
+
+@media (max-width: 768px) {
+	.split-screen-container {
+		flex-direction: column;
+	}
+	
+	.sandbox-area {
+		flex: 1;
+		height: 70vh;
+		border-right: none;
+		border-bottom: 1px solid var(--vscode-panel-border);
+	}
+	
+	.chat-area {
+		flex: 1;
+		max-width: 100%;
+		height: 30vh;
+	}
 }

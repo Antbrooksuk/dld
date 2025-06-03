@@ -9,6 +9,7 @@ import { UiServiceClient } from "./services/grpc-client"
 import McpView from "./components/mcp/configuration/McpConfigurationView"
 import { Providers } from "./Providers"
 import { Boolean, EmptyRequest } from "@shared/proto/common"
+import SandboxArea from "./components/sandbox/SandboxArea"
 
 // Get the display context from the window global
 declare global {
@@ -72,24 +73,27 @@ const AppContent = () => {
 		)
 	}
 
-	// In tab view, show chat UI with any overlays
+	// In tab view, show split screen layout with sandbox and chat
 	return (
-		<>
-			<div className="alt-ui-header">
-				<h1>Cline Chat</h1>
+		<div className="split-screen-container">
+			<SandboxArea />
+			<div className="chat-area">
+				<div className="alt-ui-header">
+					<h1>Cline Chat</h1>
+				</div>
+				{showSettings && <SettingsView onDone={hideSettings} />}
+				{showHistory && <HistoryView onDone={hideHistory} />}
+				{showMcp && <McpView initialTab={mcpTab} onDone={closeMcpView} />}
+				{showAccount && <AccountView onDone={hideAccount} />}
+				{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
+				<ChatView
+					showHistoryView={navigateToHistory}
+					isHidden={showSettings || showHistory || showMcp || showAccount}
+					showAnnouncement={showAnnouncement}
+					hideAnnouncement={hideAnnouncement}
+				/>
 			</div>
-			{showSettings && <SettingsView onDone={hideSettings} />}
-			{showHistory && <HistoryView onDone={hideHistory} />}
-			{showMcp && <McpView initialTab={mcpTab} onDone={closeMcpView} />}
-			{showAccount && <AccountView onDone={hideAccount} />}
-			{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
-			<ChatView
-				showHistoryView={navigateToHistory}
-				isHidden={showSettings || showHistory || showMcp || showAccount}
-				showAnnouncement={showAnnouncement}
-				hideAnnouncement={hideAnnouncement}
-			/>
-		</>
+		</div>
 	)
 }
 

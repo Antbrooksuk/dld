@@ -34,6 +34,18 @@
    - ✅ Ensure proper bundling of assets
    - ✅ Test the built version in both sidebar and tab contexts
 
+7. **✅ Split Screen Layout**
+   - ✅ Create a layout with chat window taking up 1/4 of the screen on the right
+   - ✅ Add a "sandbox" label centered in the remaining window space
+   - ✅ Implement responsive design for different screen sizes
+   - ✅ Ensure proper styling and positioning of both areas
+
+8. **Context Menu Integration**
+   - Add "Edit with DLD" menu item when right-clicking on folders in the file explorer
+   - Restrict the menu item to appear only on folders, not files
+   - Implement the command handler for the new context menu item
+   - Update package.json with the necessary menu contribution points
+
 ## Implementation Details
 
 1. **'Open in Editor' Button Behavior**
