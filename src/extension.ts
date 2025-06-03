@@ -665,6 +665,57 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 	)
 
+	// Register the editWithDLD command handler for folders
+	context.subscriptions.push(
+		vscode.commands.registerCommand("cline.editWithDLD", async (resource: vscode.Uri) => {
+			// Ensure Cline is visible and input focused
+			await vscode.commands.executeCommand("cline.focusChatInput")
+			await pWaitFor(() => !!AltWebviewProvider.getVisibleInstance())
+			
+			if (!resource) {
+				// If called from command palette without a resource, try to get the selected folder
+				const activeExplorer = vscode.window.activeTextEditor?.document.uri;
+				if (!activeExplorer) {
+					vscode.window.showInformationMessage("Please select a folder in the explorer first.");
+					return;
+				}
+				resource = activeExplorer;
+			}
+
+			// Get folder path
+			const folderPath = resource.fsPath;
+			
+			// Check if the path is a directory
+			try {
+				const stat = await vscode.workspace.fs.stat(resource);
+				if (!(stat.type & vscode.FileType.Directory)) {
+					vscode.window.showInformationMessage("This command can only be used on folders.");
+					return;
+				}
+			} catch (error) {
+				vscode.window.showErrorMessage(`Error accessing folder: ${error}`);
+				return;
+			}
+
+			// Get the visible webview instance
+			const visibleWebview = AltWebviewProvider.getVisibleInstance();
+			if (!visibleWebview) {
+				vscode.window.showErrorMessage("Could not open Cline. Please try again.");
+				return;
+			}
+
+			// Create a prompt for the folder
+			const folderName = vscode.workspace.asRelativePath(folderPath);
+			const prompt = `I want to work on the folder "${folderName}". Help me understand and modify the code in this directory.`;
+			
+			// Initialize a new task with the folder context
+			await visibleWebview.controller.initTask(prompt);
+			
+			// Track usage with telemetry
+			telemetryService.captureButtonClick("command_editWithDLD", visibleWebview.controller.task?.taskId, true);
+		}),
+	)
+
 	return createClineAPI(outputChannel, altSidebarWebview.controller)
 }
 

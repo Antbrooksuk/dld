@@ -156,6 +156,11 @@
 			{
 				"command": "claude-dev.openAltWebview",
 				"title": "Open Cline Alt in Tab"
+			},
+			{
+				"command": "cline.editWithDLD",
+				"title": "Edit with DLD",
+				"category": "Cline"
 			}
 		],
 		"keybindings": [
@@ -258,6 +263,13 @@
 					"group": "navigation"
 				}
 			],
+			"explorer/context": [
+				{
+					"command": "cline.editWithDLD",
+					"group": "navigation",
+					"when": "explorerResourceIsFolder"
+				}
+			],
 			"scm/title": [
 				{
 					"command": "cline.generateGitCommitMessage",
@@ -269,6 +281,10 @@
 				{
 					"command": "cline.generateGitCommitMessage",
 					"when": "scmProvider == git"
+				},
+				{
+					"command": "cline.editWithDLD",
+					"when": "false"
 				}
 			]
 		},

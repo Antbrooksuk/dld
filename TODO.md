@@ -40,11 +40,11 @@
    - ✅ Implement responsive design for different screen sizes
    - ✅ Ensure proper styling and positioning of both areas
 
-8. **Context Menu Integration**
-   - Add "Edit with DLD" menu item when right-clicking on folders in the file explorer
-   - Restrict the menu item to appear only on folders, not files
-   - Implement the command handler for the new context menu item
-   - Update package.json with the necessary menu contribution points
+8. **✅ Context Menu Integration**
+   - ✅ Add "Edit with DLD" menu item when right-clicking on folders in the file explorer
+   - ✅ Restrict the menu item to appear only on folders, not files
+   - ✅ Implement the command handler for the new context menu item
+   - ✅ Update package.json with the necessary menu contribution points
 
 ## Implementation Details
 
@@ -93,3 +93,10 @@
    - Verify that it shows only the Settings view
    - Open the alt UI in a tab (using the command)
    - Verify that it shows the full UI with Chat view 
+
+4. **Context Menu Integration**
+   - Right-click on a folder in the file explorer
+   - Verify that the "Edit with DLD" menu item appears
+   - Click on the menu item
+   - Verify that Cline opens with a prompt about the selected folder
+   - Verify that the menu item does not appear when right-clicking on files 
