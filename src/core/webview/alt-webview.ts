@@ -8,6 +8,12 @@ import { readFile } from "fs/promises"
 import path from "node:path"
 
 /**
+ * TODO:
+ * 1. In sidebar, show settings view
+ * 2. In main window, show standard Cline chat view
+ */
+
+/**
  * Alternative WebviewProvider that uses a different UI implementation
  * while maintaining the same core functionality
  */
