@@ -5,7 +5,7 @@ import { execa } from "execa"
 import { Logger } from "@services/logging/Logger"
 import { WebviewProvider } from "@core/webview"
 import { AutoApprovalSettings } from "@shared/AutoApprovalSettings"
-import { TaskServiceClient } from "webview-ui/src/services/grpc-client"
+import { TaskServiceClient } from "webview-ui-alt/src/services/grpc-client"
 import {
 	getWorkspacePath,
 	validateWorkspacePath,
