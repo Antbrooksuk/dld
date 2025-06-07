@@ -103,149 +103,232 @@ npm run check-types        # TypeScript type checking
 - React component scaffolding with proper TypeScript typing
 - Integration with popular design system patterns (shadcn/ui, Radix primitives)
 
-## React Component Preview System (From react-preview-extension)
+## React Component Preview System (Vite-based Implementation)
 
 ### Architecture Overview
-The react-preview-extension provides a working model for live React component previews using webpack dev server and iframe embedding. Key components:
+The DLD preview system provides live React component previews using Vite dev server and iframe embedding. This system is fully generic and works with any codebase without hardcoded dependencies.
 
 #### Core Implementation Pattern
-1. **WebviewPanel Class**: Manages VSCode webview lifecycle and webpack dev server
-2. **Dynamic Entry Point Generation**: Creates `preview/index.js` on-the-fly with current component
-3. **Webpack Dev Server**: Runs on localhost:9132 for hot reloading
-4. **iframe Integration**: Embeds dev server output in VSCode webview
-5. **Prop Management System**: JSON configuration for component props
+1. **PreviewServerManager**: Manages Vite dev server lifecycle within extension
+2. **Dynamic Theme Detection**: Scans workspace for theme files and generates CSS
+3. **ComponentTemplateGenerator**: Creates React entry points with proper imports
+4. **Dynamic CSS Generation**: Processes theme files to create Tailwind @source patterns
+5. **Hot Reloading**: File watchers for both components and theme changes
 
-#### Key Files to Study
-- `src/WebviewPanel.ts` - Main extension logic with webpack integration
-- `src/utils/createWebpackConfig.ts` - Webpack configuration for component preview
-- `src/utils/createJSTemplate.ts` - Dynamic React component entry point generation
-- `app/components/PreviewPanel/PreviewIframe.tsx` - iframe implementation
-- `preview/index.html` - Static HTML served by webpack dev server
+#### Key Files
+- `src/services/preview/PreviewServerManager.ts` - Main server and theme management
+- `src/services/preview/ComponentTemplateGenerator.ts` - Dynamic React component generation
+- `preview/tailwind.css` - Generated CSS with dynamic @source patterns
+- `preview/index.jsx` - Generated component entry point
+- `preview/index.html` - Static HTML served by Vite
 
 ### Critical Implementation Details
 
-#### Webpack Dev Server Integration
+#### Vite Dev Server Integration
 ```typescript
-// Key pattern: Start webpack dev server programmatically
-const compiler = Webpack(webpackConfig);
-const devServerOptions = { ...webpackConfig.devServer, open: false };
-this._previewServer = new WebpackDevServer(devServerOptions, compiler);
-this._previewServer.startCallback(() => console.log("start preview"));
+// Key pattern: Start Vite dev server programmatically
+this.viteServer = await createServer({
+  root: previewRoot,
+  plugins: [react()],
+  server: { port: 5174, host: 'localhost', strictPort: true },
+  css: {
+    postcss: {
+      plugins: [(await import('@tailwindcss/postcss')).default()]
+    }
+  }
+});
+await this.viteServer.listen(5174);
 ```
 
-#### Dynamic Component Loading
+#### Dynamic Theme Detection and CSS Generation
 ```typescript
-// Pattern: Generate entry point on file save
-fs.writeFileSync(
-  path.resolve(extensionPath, "preview", "index.js"),
-  createJSTemplate(componentPath, componentName, propList)
-);
+// Pattern: Scan workspace for theme files and generate CSS
+const themeFolderPath = path.join(this.workspacePath, 'src', 'theme');
+const cssFiles = fs.readdirSync(themeFolderPath).filter(file => file.endsWith('.css'));
+
+// Parse CSS content for custom properties
+const { colors, spacing, textSizes, fonts, utilityDefinitions } = 
+  this.parseCustomThemeProperties(cssContent);
+
+// Generate dynamic @source patterns
+const dynamicPatterns = `
+@source inline('bg-{${allColors.join(',')}}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('text-{${allTextSizes.join(',')}}');
+@source inline('{${utilityNames.join(',')}}');
+`;
 ```
 
-#### iframe Preview Display
+#### Universal Component Import Resolution
 ```typescript
-// Pattern: Simple iframe pointing to localhost dev server
-<iframe src="http://localhost:9132" />
+// Pattern: Calculate relative paths from preview folder to any workspace
+const previewRoot = path.resolve(extensionPath, 'preview');
+const relativePath = path.relative(previewRoot, componentPath);
+const importPath = relativePath; // No hardcoded aliases needed
 ```
 
-### Integration Strategy for DLD
-1. **Extend existing preview/** folder with webpack integration
-2. **Add webpack dev server lifecycle management to webview system**
-3. **Implement dynamic component entry point generation**
-4. **Integrate with existing previewConfig.json system**
-5. **Add support for TypeScript/TSX (extension only supports JS/JSX)**
+#### Hot Reloading File Watcher
+```typescript
+// Pattern: Watch theme files for changes
+this.themeWatcher = fs.watch(themeFolderPath, { recursive: true }, (_eventType, filename) => {
+  if (filename && filename.endsWith('.css')) {
+    console.log(`Theme file changed: ${filename}`);
+    this.onThemeFileChanged(); // Regenerate CSS
+  }
+});
+```
 
-### Known Issues to Address
-- Extension only supports macOS (needs cross-platform webpack config)
-- No TypeScript support (needs babel-preset-typescript)
-- Basic prop type system (needs expansion for complex props)
-- Fixed port 9132 (needs dynamic port allocation)
+### Dynamic Theme Detection System
 
-## React Component Preview Implementation - Problems Solved
+#### Supported Theme Patterns
+1. **CSS Variables**: `--color-primary-500`, `--spacing-3xl`, `--text-10xl`, `--font-brand`
+2. **@theme Blocks**: Tailwind 4 theme definitions with CSS variables
+3. **@utility Definitions**: Custom utility classes like `body-m`, `heading-lg`
+4. **Color Scales**: Automatic detection of color naming patterns
+5. **Custom Properties**: Spacing, text sizes, font families
 
-### Critical Issues Encountered and Solutions
+#### CSS Parsing Patterns
+```typescript
+// CSS Variables: --category-name-variant:
+const cssVarRegex = /--([a-zA-Z][a-zA-Z0-9-]*)-([a-zA-Z0-9-]+):/g;
 
-#### 1. **React 19 API Compatibility Issue**
+// @utility blocks: @utility name { ... }
+const utilityRegex = /@utility\s+([a-zA-Z][a-zA-Z0-9-]*)\s*\{([^}]+)\}/g;
+
+// @theme blocks: @theme inline { ... }
+const themeBlockRegex = /@theme\s+inline\s*\{([^}]+)\}/g;
+```
+
+### Universal Workspace Support
+
+#### Generic Path Resolution
+- **No hardcoded project names** - works with any workspace structure
+- **Relative path calculation** - from preview folder to workspace files
+- **Theme folder detection** - automatically finds `src/theme/` in any project
+- **Dynamic import generation** - creates proper relative imports for components
+
+#### Workspace Structure Requirements
+```
+any-project/
+├── src/
+│   ├── theme/
+│   │   ├── theme.css          # Will be auto-detected
+│   │   ├── colors.css         # Will be auto-detected  
+│   │   └── utilities.css      # Will be auto-detected
+│   └── components/
+│       └── Button/
+│           └── Button.tsx     # Can be previewed
+```
+
+### Known Issues and Limitations
+
+#### Current Limitations
+- **@layer base conflicts**: Tailwind compilation fails with @layer base + @source patterns
+- **Theme folder assumption**: Currently assumes `src/theme/` structure
+- **CSS-only themes**: Only parses CSS files, not JS/TS theme objects
+- **Single workspace**: Designed for one workspace at a time
+
+#### @layer base Issue (Temporarily Resolved)
+**Problem**: @layer base blocks cause 500 errors during CSS compilation
+**Current Solution**: Comment out @layer base in theme files
+**Future Work**: Investigate Tailwind 4 @layer + @source compatibility
+
+## Preview System Implementation - Problems Solved
+
+### Migration from Webpack to Vite
+
+#### 1. **React 19 API Compatibility**
 **Problem**: `ReactDOM.render` is deprecated in React 19
-**Error**: `react_dom__WEBPACK_IMPORTED_MODULE_1__.render is not a function`
-**Solution**: Updated to use `createRoot` API
+**Solution**: Updated to use `createRoot` API in ComponentTemplateGenerator
 ```javascript
-// Old (broken)
-ReactDOM.render(<Component />, container);
-
-// New (working)  
+// Generated template uses modern React API
+const container = document.getElementById('root');
 const root = createRoot(container);
-root.render(<Component />);
+root.render(<App />);
 ```
 
-#### 2. **Babel Loader Resolution in VSCode Extension Context**
-**Problem**: Webpack couldn't find babel presets when running from extension
-**Error**: `Cannot find package '@babel/preset-env' imported from /babel-virtual-resolve-base.js`
-**Solution**: Use `require.resolve()` for all babel loaders and presets
+#### 2. **Tailwind 4 @source Directive Integration**
+**Problem**: Traditional safelist approach is inefficient for dynamic themes
+**Solution**: Implemented dynamic @source pattern generation
 ```typescript
-// Fixed webpack config
-loader: require.resolve('babel-loader'),
-presets: [
-  [require.resolve('@babel/preset-env'), { targets: { node: 'current' } }],
-  [require.resolve('@babel/preset-react'), { runtime: 'automatic' }],
-  [require.resolve('@babel/preset-typescript')]
-]
+// Dynamic patterns based on discovered theme properties
+@source inline('bg-{${allColors.join(',')}}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('text-{${allTextSizes.join(',')}}');
+@source inline('{${utilityNames.join(',')}}');
 ```
 
-#### 3. **VSCode Webview Content Security Policy (CSP) Blocking Iframes**
-**Problem**: VSCode webview CSP blocked localhost iframes by default
-**Symptom**: Iframe appeared but showed blank content, no console errors
-**Root Cause**: Missing `frame-src` directive in CSP
-**Solution**: Added localhost iframe support to both production and development CSP:
+#### 3. **Generic Workspace Support**
+**Problem**: Hardcoded project paths like `@dld-skeleton` break universality
+**Solution**: Dynamic relative path calculation for any workspace
 ```typescript
-// Production CSP
-content="default-src 'none'; ... connect-src https: wss: http://localhost:*; frame-src http://localhost:*;"
-
-// Development CSP  
-csp = [..., `frame-src http://localhost:*`]
+// Universal path resolution
+const previewRoot = path.resolve(extensionPath, 'preview');
+const relativePath = path.relative(previewRoot, componentPath);
+// Results in: "../../any-project/src/components/Button/Button.tsx"
 ```
 
-#### 4. **Iframe Content Not Updating After Component Changes**
-**Problem**: Iframe didn't automatically reload when webpack dev server content changed
-**Symptom**: Had to manually switch iframe URL to see updated components
-**Root Cause**: React iframe doesn't detect external content changes
-**Solution**: Added manual reload functionality with React key prop
+#### 4. **Theme Detection and Hot Reloading**
+**Problem**: No automatic detection of theme changes across different projects
+**Solution**: File watcher system with CSS parsing
 ```typescript
-const [iframeKey, setIframeKey] = useState(Date.now());
-
-// Force iframe reload
-<iframe key={iframeKey} src={url} />
-<button onClick={() => setIframeKey(Date.now())}>Reload</button>
+// Automatic theme file discovery and change detection
+const themeFolderPath = path.join(workspacePath, 'src', 'theme');
+this.themeWatcher = fs.watch(themeFolderPath, { recursive: true }, ...);
 ```
 
-#### 5. **ESBuild External Dependencies Issue**
-**Problem**: ESBuild tried to bundle webpack and webpack-dev-server into extension
-**Error**: Multiple build errors about missing Node.js modules
-**Solution**: Added webpack dependencies to external list in esbuild config
-```javascript
-external: ["vscode", "webpack", "webpack-dev-server"]
-```
+#### 5. **@layer base Compilation Conflicts**
+**Problem**: @layer base blocks cause 500 errors with @source patterns
+**Temporary Solution**: Remove @layer base from theme files during parsing
+**Long-term**: Need to investigate Tailwind 4 layer processing order
 
-### Debugging Techniques That Worked
+### Debugging Techniques for Theme System
 
-1. **VSCode Webview Developer Tools**: `Cmd+Shift+P` → "Developer: Open Webview Developer Tools"
-2. **CSP Testing**: Added test buttons to verify iframe can load different URLs
-3. **Debug Overlays**: Added visual indicators showing iframe source URL
-4. **Console Logging**: Added iframe load/error event handlers
-5. **Step-by-step Isolation**: Tested each component (server, webpack, iframe, CSP) separately
+1. **Console Logging**: Added extensive logging for theme file discovery and parsing
+2. **CSS Content Inspection**: Log parsed theme properties and generated @source patterns
+3. **Path Resolution Testing**: Verify relative path calculations are correct
+4. **File Existence Checks**: Ensure theme files are found at expected locations
+5. **CSS Compilation Monitoring**: Watch for 500 errors during CSS generation
 
 ### Key Architectural Insights
 
-- **VSCode webviews have strict CSP by default** - must explicitly allow localhost iframes
-- **Webpack dev server works fine in extension context** - just needs proper loader resolution  
-- **Iframe content updates require manual intervention** - no automatic reload on server changes
-- **React 19+ requires createRoot API** - old ReactDOM.render is removed
-- **Extension bundling requires careful external dependency management** - can't bundle Node.js server tools
+- **Vite dev server works perfectly in extension context** - simpler than webpack setup
+- **Tailwind 4 @source directives are powerful** - but require careful pattern generation
+- **Universal path resolution is critical** - avoid hardcoded project assumptions
+- **Theme parsing must be robust** - handle various CSS variable naming conventions
+- **Hot reloading requires file watchers** - Vite HMR doesn't detect external theme changes
+- **CSP still requires localhost iframe permissions** - inherited from original implementation
 
-### Working Solution Architecture
+### Current Working Architecture
 
-1. **PreviewServerManager**: Manages webpack dev server lifecycle within extension
-2. **ComponentTemplateGenerator**: Creates dynamic React entry points
-3. **SandboxArea**: React component with iframe and manual reload controls
-4. **Webpack Dev Server**: Serves dynamically generated component previews
-5. **CSP Configuration**: Allows localhost iframe embedding in webview
+1. **PreviewServerManager**: 
+   - Manages Vite dev server lifecycle (port 5174)
+   - Handles dynamic theme detection and CSS generation
+   - Provides file watching for theme changes
+   - Universal workspace path resolution
+
+2. **ComponentTemplateGenerator**: 
+   - Creates React entry points with proper relative imports
+   - Supports any workspace structure without aliases
+   - Generates clean JSX with component props
+
+3. **Dynamic CSS Generation**:
+   - Scans `src/theme/` for CSS files
+   - Parses CSS variables, @theme blocks, @utility definitions
+   - Generates Tailwind @source patterns for discovered properties
+   - Supports colors, spacing, text sizes, fonts, and custom utilities
+
+4. **SandboxArea**: React component with iframe for preview display
+
+5. **Theme File Processing**:
+   - Automatic discovery of theme files
+   - Regex-based parsing for multiple CSS patterns
+   - Deduplication of properties and imports
+   - Hot reloading when theme files change
+
+### Development Workflow
+
+1. **Start preview server**: `PreviewServerManager.start()`
+2. **Scan for themes**: Automatically detects `src/theme/*.css` files
+3. **Parse theme properties**: Extract colors, spacing, utilities, etc.
+4. **Generate dynamic CSS**: Create @source patterns for discovered properties
+5. **Update component**: Generate entry point with relative imports
+6. **Hot reload**: File watchers trigger CSS regeneration on theme changes

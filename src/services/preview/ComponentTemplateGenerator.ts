@@ -8,9 +8,9 @@ export class ComponentTemplateGenerator {
 	/**
 	 * Generate a React entry point that imports and renders a component
 	 */
-	static generateTemplate(componentPath: string, componentName: string, props: Prop[] = []): string {
-		// Convert absolute paths to Vite-compatible alias paths
-		const importPath = this.convertToAliasPath(componentPath);
+	static generateTemplate(componentPath: string, componentName: string, props: Prop[] = [], extensionPath?: string): string {
+		// Convert absolute paths to relative paths from preview folder
+		const importPath = this.convertToRelativePath(componentPath, extensionPath);
 		
 		// Generate the template using React 19+ createRoot API
 		// Use named export to match filename convention
@@ -108,16 +108,16 @@ root.render(<App />);
 	}
 
 	/**
-	 * Convert absolute file paths to Vite-compatible alias paths
+	 * Convert absolute file paths to relative paths from preview folder
 	 */
-	private static convertToAliasPath(componentPath: string): string {
-		// Handle dld-skeleton repository paths
-		if (componentPath.includes('/dld-skeleton/src/')) {
-			return componentPath.replace(/.*\/dld-skeleton\/src\//, '@dld-skeleton/');
+	private static convertToRelativePath(componentPath: string, extensionPath?: string): string {
+		if (!extensionPath) {
+			return componentPath; // Fallback to original path
 		}
 		
-		// For other paths, return as-is (relative or absolute)
-		return componentPath;
+		const previewRoot = require('path').resolve(extensionPath, 'preview');
+		const relativePath = require('path').relative(previewRoot, componentPath);
+		return relativePath;
 	}
 
 	/**

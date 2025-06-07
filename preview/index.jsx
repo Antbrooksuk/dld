@@ -2,7 +2,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './tailwind.css';
-import { Button } from "@dld-skeleton/components/Button/Button.tsx";
+import { Button } from "../../dld-skeleton/src/components/Button/Button.tsx";
 
 // Render the component with props
 const App = () => {

@@ -174,9 +174,11 @@ export class PreviewServerManager {
         const cssFiles = files.filter(file => file.endsWith('.css'));
         
         for (const file of cssFiles) {
-          const aliasPath = `@dld-skeleton/theme/${file}`;
-          foundThemes.push(aliasPath);
-          console.log(`Found theme file: ${aliasPath}`);
+          const previewRoot = path.resolve(this.extensionPath, 'preview');
+          const themeFilePath = path.join(themeFolderPath, file);
+          const relativePath = path.relative(previewRoot, themeFilePath);
+          foundThemes.push(relativePath);
+          console.log(`Found theme file: ${relativePath}`);
         }
       } else {
         console.log('No theme folder found at src/theme');
@@ -190,6 +192,7 @@ export class PreviewServerManager {
       fs.writeFileSync(cssPath, cssContent);
       
       console.log(`✅ Updated tailwind.css with ${foundThemes.length} theme imports`);
+      console.log('Generated CSS preview:', cssContent.substring(0, 500) + '...');
       
     } catch (error) {
       console.error('Error updating Tailwind CSS with themes:', error);
@@ -279,6 +282,7 @@ export class PreviewServerManager {
       utilityDefinitions.push(fullDefinition);
     }
     
+    
     console.log('Extracted custom properties:', {
       colors: Array.from(colors),
       spacing: Array.from(spacing),
@@ -294,7 +298,6 @@ export class PreviewServerManager {
    * Generate dynamic Tailwind CSS content with theme imports and parsed properties
    */
   private async generateDynamicTailwindCss(themeImports: string[]): Promise<string> {
-    const imports = themeImports.map(theme => `@import "${theme}";`).join('\n');
     
     // Parse all theme files to extract custom properties
     const allCustomColors = new Set<string>();
@@ -305,11 +308,13 @@ export class PreviewServerManager {
     
     for (const themeImport of themeImports) {
       try {
-        // Convert alias path back to file system path
-        const aliasPath = themeImport.replace('@dld-skeleton/', '');
-        const filePath = path.join(this.workspacePath, 'src', aliasPath);
+        // Convert relative path back to absolute file system path  
+        const previewRoot = path.resolve(this.extensionPath, 'preview');
+        const filePath = path.resolve(previewRoot, themeImport);
+        console.log(`Looking for theme file at: ${filePath}`);
         
         if (fs.existsSync(filePath)) {
+          console.log(`Reading theme file: ${filePath}`);
           const cssContent = fs.readFileSync(filePath, 'utf8');
           const { colors, spacing, textSizes, fonts, utilityDefinitions } = this.parseCustomThemeProperties(cssContent);
           
@@ -385,16 +390,20 @@ export class PreviewServerManager {
 /* Dynamic font patterns for discovered custom fonts: ${customFontsList.join(', ')} */
 @source inline('font-{${allFonts.join(',')}}');` : '';
 
-    // Extract utility names for @source patterns
-    const utilityNames = allUtilityDefinitions.map(def => {
+    // Extract utility names for @source patterns (deduplicated)
+    const utilityNamesSet = new Set(allUtilityDefinitions.map(def => {
       const match = def.match(/@utility\s+([a-zA-Z][a-zA-Z0-9-]*)/);
       return match ? match[1] : null;
-    }).filter(Boolean);
+    }).filter(Boolean));
+    const utilityNames = Array.from(utilityNamesSet);
     
     const utilitySourcePatterns = utilityNames.length > 0 ? `
 /* Custom utility source patterns for: ${utilityNames.join(', ')} */
 @source inline('{${utilityNames.join(',')}}');` : '';
 
+    // Use original theme imports
+    const imports = themeImports.map(theme => `@import "${theme}";`).join('\n');
+    
     return `@import "tailwindcss";
 ${imports}
 
@@ -439,7 +448,8 @@ ${utilitySourcePatterns}
       const template = ComponentTemplateGenerator.generateTemplate(
         componentInfo.path,
         componentInfo.name,
-        componentInfo.props
+        componentInfo.props,
+        this.extensionPath
       );
       
       // Write the entry point file

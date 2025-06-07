@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@dld-skeleton/theme/theme.css";
+@import "../../dld-skeleton/src/theme/theme.css";
 
 /* Include common utility patterns used in external components */
 
