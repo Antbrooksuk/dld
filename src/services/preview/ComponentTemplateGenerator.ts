@@ -13,24 +13,12 @@ export class ComponentTemplateGenerator {
     componentName: string,
     props: Prop[] = []
   ): string {
-    // Convert props array to JSX props string
-    let propsString = '';
-    
-    if (props.length > 0) {
-      props.forEach((prop) => {
-        if (prop.propType === 'string') {
-          propsString += ` ${prop.propName}={"${prop.defaultValue}"}`;
-        } else {
-          propsString += ` ${prop.propName}={${prop.defaultValue}}`;
-        }
-      });
-    }
-
     // Generate the template using React 19+ createRoot API
+    // Use named export to match filename convention
     return `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import ${componentName} from "${componentPath}";
+import { ${componentName} } from "${componentPath}";
 
 // Render the component with props
 const App = () => {

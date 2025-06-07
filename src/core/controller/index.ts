@@ -57,6 +57,7 @@ import { sendAuthCallbackEvent } from "./account/subscribeToAuthCallback"
 import { refreshClineRulesToggles } from "@core/context/instructions/user-instructions/cline-rules"
 import { refreshExternalRulesToggles } from "@core/context/instructions/user-instructions/external-rules"
 import { refreshWorkflowToggles } from "@core/context/instructions/user-instructions/workflows"
+import { PreviewServerManager } from "@services/preview/PreviewServerManager"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -72,6 +73,7 @@ export class Controller {
 	workspaceTracker: WorkspaceTracker
 	mcpHub: McpHub
 	accountService: ClineAccountService
+	previewServerManager?: PreviewServerManager
 	latestAnnouncementId = "may-22-2025_16:11:00" // update to some unique identifier when we add a new announcement
 
 	constructor(
@@ -97,6 +99,14 @@ export class Controller {
 			},
 		)
 
+		// Initialize preview server manager if workspace is available
+		const workspaceFolders = vscode.workspace.workspaceFolders
+		if (workspaceFolders && workspaceFolders.length > 0) {
+			const workspacePath = workspaceFolders[0].uri.fsPath
+			const extensionPath = this.context.extensionPath
+			this.previewServerManager = PreviewServerManager.getInstance(extensionPath, workspacePath)
+		}
+
 		// Clean up legacy checkpoints
 		cleanupLegacyCheckpoints(this.context.globalStorageUri.fsPath, this.outputChannel).catch((error) => {
 			console.error("Failed to cleanup legacy checkpoints:", error)
@@ -118,6 +128,11 @@ export class Controller {
 		}
 		this.workspaceTracker.dispose()
 		this.mcpHub.dispose()
+		
+		// Dispose preview server manager
+		if (this.previewServerManager) {
+			this.previewServerManager.dispose()
+		}
 
 		console.error("Controller disposed")
 	}
@@ -288,6 +303,12 @@ export class Controller {
 			}
 			case "fetchMcpMarketplace": {
 				await this.fetchMcpMarketplace(message.bool)
+				break
+			}
+			case "stopPreviewServer": {
+				if (this.previewServerManager && this.previewServerManager.isRunning()) {
+					await this.previewServerManager.stop()
+				}
 				break
 			}
 			// case "openMcpMarketplaceServerDetails": {

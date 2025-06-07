@@ -683,114 +683,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		return previewServerManager;
 	};
 
-	// Register preview server commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand("cline.startPreviewServer", async () => {
-			try {
-				const manager = getPreviewServerManager();
-				if (manager.isRunning()) {
-					vscode.window.showInformationMessage("Preview server is already running");
-					return;
-				}
-				await manager.start();
-				vscode.window.showInformationMessage(
-					`Preview server started at ${manager.getServerUrl()}`
-				);
-			} catch (error) {
-				vscode.window.showErrorMessage(`Failed to start preview server: ${error}`);
-			}
-		}),
-		
-		vscode.commands.registerCommand("cline.stopPreviewServer", async () => {
-			try {
-				if (!previewServerManager) {
-					vscode.window.showInformationMessage("Preview server is not running");
-					return;
-				}
-				await previewServerManager.stop();
-				vscode.window.showInformationMessage("Preview server stopped");
-			} catch (error) {
-				vscode.window.showErrorMessage(`Failed to stop preview server: ${error}`);
-			}
-		}),
-		
-		vscode.commands.registerCommand("cline.togglePreviewServer", async () => {
-			try {
-				const manager = getPreviewServerManager();
-				if (manager.isRunning()) {
-					await manager.stop();
-					vscode.window.showInformationMessage("Preview server stopped");
-				} else {
-					await manager.start();
-					vscode.window.showInformationMessage(
-						`Preview server started at ${manager.getServerUrl()}`
-					);
-				}
-			} catch (error) {
-				vscode.window.showErrorMessage(`Failed to toggle preview server: ${error}`);
-			}
-		}),
-		
-		vscode.commands.registerCommand("cline.setTestComponent", async () => {
-			try {
-				const manager = getPreviewServerManager();
-				
-				// Start server if not running
-				if (!manager.isRunning()) {
-					await manager.start();
-				}
-				
-				// Set test component
-				await manager.setTestComponent("Dynamic Component Test");
-				vscode.window.showInformationMessage("Test component loaded in preview");
-			} catch (error) {
-				vscode.window.showErrorMessage(`Failed to set test component: ${error}`);
-			}
-		}),
-		
-		vscode.commands.registerCommand("cline.previewSampleButton", async () => {
-			try {
-				const manager = getPreviewServerManager();
-				
-				// Start server if not running
-				if (!manager.isRunning()) {
-					await manager.start();
-				}
-				
-				// Preview the sample button component
-				const sampleButtonPath = path.join(context.extensionPath, 'webview-ui-alt/src/test-components/SampleButton.tsx');
-				await manager.updateComponent({
-					name: 'SampleButton',
-					path: sampleButtonPath,
-					props: [
-						{ propName: 'text', propType: 'string', defaultValue: 'Hello DLD!' },
-						{ propName: 'variant', propType: 'string', defaultValue: 'primary' },
-						{ propName: 'disabled', propType: 'boolean', defaultValue: 'false' }
-					]
-				});
-				
-				vscode.window.showInformationMessage("SampleButton component loaded in preview");
-			} catch (error) {
-				vscode.window.showErrorMessage(`Failed to preview SampleButton: ${error}`);
-			}
-		}),
-	);
 
 	// Register the editWithDLD command handler for folders
 	context.subscriptions.push(
 		vscode.commands.registerCommand("cline.editWithDLD", async (resource: vscode.Uri) => {
-			// Ensure Cline is visible and input focused
-			await vscode.commands.executeCommand("cline.focusChatInput")
-			await pWaitFor(() => !!AltWebviewProvider.getVisibleInstance())
-			
 			if (!resource) {
-				// If called from command palette without a resource, try to get the selected folder
-				const activeExplorer = vscode.window.activeTextEditor?.document.uri;
-				if (!activeExplorer) {
-					vscode.window.showInformationMessage("Please select a folder in the explorer first.");
-					return;
-				}
-				resource = activeExplorer;
+				vscode.window.showInformationMessage("Please select a folder in the explorer first.");
+				return;
 			}
 
 			// Get folder path
@@ -808,22 +707,59 @@ export async function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
-			// Get the visible webview instance
-			const visibleWebview = AltWebviewProvider.getVisibleInstance();
-			if (!visibleWebview) {
-				vscode.window.showErrorMessage("Could not open Cline. Please try again.");
-				return;
-			}
+			// Find .tsx files in the folder
+			try {
+				const files = await vscode.workspace.fs.readDirectory(resource);
+				const tsxFiles = files.filter(([name, type]) => 
+					type === vscode.FileType.File && name.endsWith('.tsx')
+				);
 
-			// Create a prompt for the folder
-			const folderName = vscode.workspace.asRelativePath(folderPath);
-			const prompt = `I want to work on the folder "${folderName}". Help me understand and modify the code in this directory.`;
-			
-			// Initialize a new task with the folder context
-			await visibleWebview.controller.initTask(prompt);
-			
-			// Track usage with telemetry
-			telemetryService.captureButtonClick("command_editWithDLD", visibleWebview.controller.task?.taskId, true);
+				if (tsxFiles.length === 0) {
+					vscode.window.showInformationMessage("No .tsx files found in this folder.");
+					return;
+				}
+
+				// If multiple .tsx files, let user choose or take the first one
+				let selectedFile: string;
+				if (tsxFiles.length === 1) {
+					selectedFile = tsxFiles[0][0];
+				} else {
+					// Show quick pick for multiple files
+					const picked = await vscode.window.showQuickPick(
+						tsxFiles.map(([name]) => name),
+						{ placeHolder: "Select a component to preview" }
+					);
+					if (!picked) return;
+					selectedFile = picked;
+				}
+
+				// Get the full path to the selected file
+				const componentPath = path.join(folderPath, selectedFile);
+				const componentName = path.basename(selectedFile, '.tsx');
+
+				// Start preview server and load component
+				const manager = getPreviewServerManager();
+				
+				// Start server if not running
+				if (!manager.isRunning()) {
+					await manager.start();
+				}
+				
+				// Load the component in preview
+				await manager.updateComponent({
+					name: componentName,
+					path: componentPath,
+					props: [] // Will be auto-detected or configured later
+				});
+				
+				vscode.window.showInformationMessage(`${componentName} component loaded in DLD preview`);
+				
+				// Track usage with telemetry
+				telemetryService.captureButtonClick("command_editWithDLD", undefined, true);
+
+			} catch (error) {
+				vscode.window.showErrorMessage(`Failed to preview component: ${error}`);
+			}
 		}),
 	)
 

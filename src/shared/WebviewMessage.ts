@@ -27,6 +27,7 @@ export interface WebviewMessage {
 		| "grpc_request_cancel"
 		| "toggleWorkflow"
 		| "executeQuickWin"
+		| "stopPreviewServer"
 
 	text?: string
 	disabled?: boolean

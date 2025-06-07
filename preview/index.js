@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import SampleButton from "/Users/an.brooks/Projects/dld/webview-ui-alt/src/test-components/SampleButton.tsx";
+import { Button2 } from "/Users/an.brooks/Projects/dld-skeleton/src/components/Button2.tsx";
 
 // Render the component with props
 const App = () => {
@@ -17,7 +17,7 @@ const App = () => {
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
       }
     },
-    React.createElement(SampleButton, {text: "Hello DLD!", variant: "primary", disabled: false}),
+    React.createElement(Button2, {}),
     // Debug info
     React.createElement(
       'div',
@@ -34,7 +34,7 @@ const App = () => {
           fontFamily: 'monospace'
         }
       },
-      'Component: SampleButton'
+      'Component: Button2'
     )
   );
 };

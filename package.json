@@ -161,31 +161,6 @@
 				"command": "cline.editWithDLD",
 				"title": "Edit with DLD",
 				"category": "Cline"
-			},
-			{
-				"command": "cline.startPreviewServer",
-				"title": "Start Component Preview Server",
-				"category": "DLD"
-			},
-			{
-				"command": "cline.stopPreviewServer",
-				"title": "Stop Component Preview Server",
-				"category": "DLD"
-			},
-			{
-				"command": "cline.togglePreviewServer",
-				"title": "Toggle Component Preview Server",
-				"category": "DLD"
-			},
-			{
-				"command": "cline.setTestComponent",
-				"title": "Load Test Component in Preview",
-				"category": "DLD"
-			},
-			{
-				"command": "cline.previewSampleButton",
-				"title": "Preview Sample Button Component",
-				"category": "DLD"
 			}
 		],
 		"keybindings": [
