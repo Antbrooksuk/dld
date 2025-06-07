@@ -205,11 +205,13 @@ export class PreviewServerManager {
     spacing: Set<string>;
     textSizes: Set<string>;
     fonts: Set<string>;
+    utilityDefinitions: string[];
   } {
     const colors = new Set<string>();
     const spacing = new Set<string>();
     const textSizes = new Set<string>();
     const fonts = new Set<string>();
+    const utilityDefinitions: string[] = [];
     
     // Parse CSS variables like --color-primary-500, --spacing-3xl, etc.
     const cssVarRegex = /--([a-zA-Z][a-zA-Z0-9-]*)-([a-zA-Z0-9-]+):/g;
@@ -267,14 +269,25 @@ export class PreviewServerManager {
       }
     }
     
+    // Parse @utility blocks to extract complete utility definitions
+    const utilityRegex = /@utility\s+([a-zA-Z][a-zA-Z0-9-]*)\s*\{([^}]+)\}/g;
+    let utilityMatch;
+    while ((utilityMatch = utilityRegex.exec(cssContent)) !== null) {
+      const utilityName = utilityMatch[1];
+      const utilityBody = utilityMatch[2];
+      const fullDefinition = `@utility ${utilityName} {${utilityBody}}`;
+      utilityDefinitions.push(fullDefinition);
+    }
+    
     console.log('Extracted custom properties:', {
       colors: Array.from(colors),
       spacing: Array.from(spacing),
       textSizes: Array.from(textSizes),
-      fonts: Array.from(fonts)
+      fonts: Array.from(fonts),
+      utilityDefinitions: utilityDefinitions
     });
     
-    return { colors, spacing, textSizes, fonts };
+    return { colors, spacing, textSizes, fonts, utilityDefinitions };
   }
 
   /**
@@ -288,6 +301,7 @@ export class PreviewServerManager {
     const allCustomSpacing = new Set<string>();
     const allCustomTextSizes = new Set<string>();
     const allCustomFonts = new Set<string>();
+    const allUtilityDefinitions: string[] = [];
     
     for (const themeImport of themeImports) {
       try {
@@ -297,12 +311,13 @@ export class PreviewServerManager {
         
         if (fs.existsSync(filePath)) {
           const cssContent = fs.readFileSync(filePath, 'utf8');
-          const { colors, spacing, textSizes, fonts } = this.parseCustomThemeProperties(cssContent);
+          const { colors, spacing, textSizes, fonts, utilityDefinitions } = this.parseCustomThemeProperties(cssContent);
           
           colors.forEach(color => allCustomColors.add(color));
           spacing.forEach(size => allCustomSpacing.add(size));
           textSizes.forEach(size => allCustomTextSizes.add(size));
           fonts.forEach(font => allCustomFonts.add(font));
+          allUtilityDefinitions.push(...utilityDefinitions);
         }
       } catch (error) {
         console.log(`Could not parse theme file ${themeImport}:`, error.message);
@@ -369,7 +384,17 @@ export class PreviewServerManager {
     const dynamicFontPatterns = customFontsList.length > 0 ? `
 /* Dynamic font patterns for discovered custom fonts: ${customFontsList.join(', ')} */
 @source inline('font-{${allFonts.join(',')}}');` : '';
+
+    // Extract utility names for @source patterns
+    const utilityNames = allUtilityDefinitions.map(def => {
+      const match = def.match(/@utility\s+([a-zA-Z][a-zA-Z0-9-]*)/);
+      return match ? match[1] : null;
+    }).filter(Boolean);
     
+    const utilitySourcePatterns = utilityNames.length > 0 ? `
+/* Custom utility source patterns for: ${utilityNames.join(', ')} */
+@source inline('{${utilityNames.join(',')}}');` : '';
+
     return `@import "tailwindcss";
 ${imports}
 
@@ -392,6 +417,7 @@ ${dynamicFontPatterns || `@source inline('font-{sans,serif,mono}');`}
 @source inline('font-{thin,extralight,light,normal,medium,semibold,bold,extrabold,black}');
 @source inline('{sm:,md:,lg:,xl:,2xl:}grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
 @source inline('{sm:,md:,lg:,xl:,2xl:}gap-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32}');
+${utilitySourcePatterns}
 `;
   }
 
