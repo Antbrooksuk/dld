@@ -29,6 +29,7 @@ https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/framewo
 */
 
 let outputChannel: vscode.OutputChannel
+let previewServerManager: PreviewServerManager | undefined
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -668,16 +669,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	)
 
 	// Initialize Preview Server Manager
-	let previewServerManager: PreviewServerManager | undefined;
-	
 	const getPreviewServerManager = (): PreviewServerManager => {
+		outputChannel.appendLine("=== Getting Preview Server Manager ===");
+		
 		if (!previewServerManager) {
 			const workspaceFolders = vscode.workspace.workspaceFolders;
+			outputChannel.appendLine(`Workspace folders: ${JSON.stringify(workspaceFolders?.map(f => f.uri.fsPath))}`);
+			
 			if (!workspaceFolders) {
 				throw new Error("No workspace folder open");
 			}
 			const workspacePath = workspaceFolders[0].uri.fsPath;
 			const extensionPath = context.extensionPath;
+			
+			outputChannel.appendLine("Creating PreviewServerManager with:");
+			outputChannel.appendLine(`  Extension path: ${extensionPath}`);
+			outputChannel.appendLine(`  Workspace path: ${workspacePath}`);
+			
 			previewServerManager = PreviewServerManager.getInstance(extensionPath, workspacePath);
 		}
 		return previewServerManager;
@@ -687,6 +695,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Register the editWithDLD command handler for folders
 	context.subscriptions.push(
 		vscode.commands.registerCommand("cline.editWithDLD", async (resource: vscode.Uri) => {
+			outputChannel.appendLine("=== Edit with DLD command triggered ===");
+			outputChannel.appendLine(`Resource: ${resource}`);
+			
 			if (!resource) {
 				vscode.window.showInformationMessage("Please select a folder in the explorer first.");
 				return;
@@ -694,6 +705,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			// Get folder path
 			const folderPath = resource.fsPath;
+			outputChannel.appendLine(`Folder path: ${folderPath}`);
 			
 			// Check if the path is a directory
 			try {
@@ -738,11 +750,17 @@ export async function activate(context: vscode.ExtensionContext) {
 				const componentName = path.basename(selectedFile, '.tsx');
 
 				// Start preview server and load component
+				outputChannel.appendLine("Getting preview server manager...");
 				const manager = getPreviewServerManager();
+				outputChannel.appendLine("Preview server manager created, checking if running...");
 				
 				// Start server if not running
 				if (!manager.isRunning()) {
+					outputChannel.appendLine("Server not running, starting now...");
 					await manager.start();
+					outputChannel.appendLine("Server started successfully");
+				} else {
+					outputChannel.appendLine("Server already running");
 				}
 				
 				// Load the component in preview
@@ -784,11 +802,13 @@ export async function deactivate() {
 
 	// Clean up preview server
 	try {
-		const manager = PreviewServerManager.getInstance("", "");
-		if (manager.isRunning()) {
-			await manager.stop();
+		// Only clean up if we have a valid instance
+		if (previewServerManager && previewServerManager.isRunning()) {
+			await previewServerManager.stop();
 		}
-		manager.dispose();
+		if (previewServerManager) {
+			previewServerManager.dispose();
+		}
 	} catch (error) {
 		// Ignore errors during cleanup
 	}

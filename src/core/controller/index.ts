@@ -76,6 +76,19 @@ export class Controller {
 	previewServerManager?: PreviewServerManager
 	latestAnnouncementId = "may-22-2025_16:11:00" // update to some unique identifier when we add a new announcement
 
+	private getPreviewServerManager(): PreviewServerManager {
+		if (!this.previewServerManager) {
+			const workspaceFolders = vscode.workspace.workspaceFolders
+			if (!workspaceFolders || workspaceFolders.length === 0) {
+				throw new Error("No workspace folder open for preview server")
+			}
+			const workspacePath = workspaceFolders[0].uri.fsPath
+			const extensionPath = this.context.extensionPath
+			this.previewServerManager = PreviewServerManager.getInstance(extensionPath, workspacePath)
+		}
+		return this.previewServerManager
+	}
+
 	constructor(
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
@@ -99,13 +112,7 @@ export class Controller {
 			},
 		)
 
-		// Initialize preview server manager if workspace is available
-		const workspaceFolders = vscode.workspace.workspaceFolders
-		if (workspaceFolders && workspaceFolders.length > 0) {
-			const workspacePath = workspaceFolders[0].uri.fsPath
-			const extensionPath = this.context.extensionPath
-			this.previewServerManager = PreviewServerManager.getInstance(extensionPath, workspacePath)
-		}
+		// Preview server manager will be initialized lazily when needed
 
 		// Clean up legacy checkpoints
 		cleanupLegacyCheckpoints(this.context.globalStorageUri.fsPath, this.outputChannel).catch((error) => {

@@ -145,7 +145,7 @@ const extensionConfig = {
 	...baseConfig,
 	entryPoints: ["src/extension.ts"],
 	outfile: `${destDir}/extension.js`,
-	external: ["vscode", "webpack", "webpack-dev-server"],
+	external: ["vscode", "webpack", "webpack-dev-server", "vite", "@vitejs/plugin-react", "@tailwindcss/postcss", "fsevents", "lightningcss"],
 }
 
 // Standalone-specific configuration

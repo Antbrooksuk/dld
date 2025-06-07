@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { vscode } from "@/utils/vscode";
-import { TabList, TabTrigger } from "@/components/common/Tab";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 
 interface SandboxAreaProps {
@@ -18,21 +17,6 @@ const SandboxContainer = styled.div`
   overflow: hidden;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 16px;
-  background-color: var(--vscode-editorWidget-background);
-  border-bottom: 1px solid var(--vscode-editorWidget-border);
-`;
-
-const Title = styled.h3`
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--vscode-foreground);
-`;
 
 
 const PreviewContainer = styled.div`
@@ -171,7 +155,7 @@ const SandboxArea: React.FC<SandboxAreaProps> = () => {
             <IframeContainer>
               <PreviewIframe 
                 key={iframeKey}
-                src="http://localhost:9132"
+                src="http://localhost:5174"
                 title="Component Preview"
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
