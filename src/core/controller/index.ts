@@ -128,7 +128,7 @@ export class Controller {
 		}
 		this.workspaceTracker.dispose()
 		this.mcpHub.dispose()
-		
+
 		// Dispose preview server manager
 		if (this.previewServerManager) {
 			this.previewServerManager.dispose()

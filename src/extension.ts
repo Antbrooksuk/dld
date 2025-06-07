@@ -752,6 +752,9 @@ export async function activate(context: vscode.ExtensionContext) {
 					props: [] // Will be auto-detected or configured later
 				});
 				
+				// Open Cline in a new tab instead of just loading the component
+				await openClineInNewTab();
+				
 				vscode.window.showInformationMessage(`${componentName} component loaded in DLD preview`);
 				
 				// Track usage with telemetry
