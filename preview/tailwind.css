@@ -1,23 +1,33 @@
 @import "tailwindcss";
+@import "@dld-skeleton/theme/theme.css";
 
 /* Include common utility patterns used in external components */
-@source inline('px-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96}');
-@source inline('py-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96}');
-@source inline('p-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96}');
-@source inline('m-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96}');
-@source inline('bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,100,200,300,400,500,600,700,800,900,950}');
-@source inline('text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,100,200,300,400,500,600,700,800,900,950}');
-@source inline('hover:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,100,200,300,400,500,600,700,800,900,950}');
+
+/* Dynamic spacing patterns for discovered custom sizes: 3xl, 4xl */
+@source inline('px-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
+@source inline('py-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
+@source inline('p-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
+@source inline('m-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
+
+/* Dynamic color patterns for discovered custom colors: jet-orange, blue, color-primary, primary */
+@source inline('bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('hover:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
+
+/* Dynamic text size patterns for discovered custom sizes: 10xl, massive, giant */
+@source inline('text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
+
+/* Dynamic font patterns for discovered custom fonts: brand, display, custom, size-giant, family-custom */
+@source inline('font-{sans,serif,mono,brand,display,custom,size-giant,family-custom}');
 @source inline('text-{white,black}');
 @source inline('rounded{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
 @source inline('{flex,grid,block,inline,inline-block,inline-flex,inline-grid,hidden}');
 @source inline('{items,justify}-{start,end,center,stretch,between,around,evenly}');
 @source inline('min-h-{screen,full,fit,min,max}');
-@source inline('font-{sans,serif,mono}');
 @source inline('{fixed,absolute,relative,static,sticky}');
 @source inline('{top,right,bottom,left}-{0,1,2,3,4,5,6,7,8,9,10,11,12,auto}');
 @source inline('bg-opacity-{0,5,10,20,25,30,40,50,60,70,75,80,90,95,100}');
-@source inline('text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl}');
 @source inline('font-{thin,extralight,light,normal,medium,semibold,bold,extrabold,black}');
 @source inline('{sm:,md:,lg:,xl:,2xl:}grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
 @source inline('{sm:,md:,lg:,xl:,2xl:}gap-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32}');
