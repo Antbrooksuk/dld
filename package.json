@@ -161,6 +161,31 @@
 				"command": "cline.editWithDLD",
 				"title": "Edit with DLD",
 				"category": "Cline"
+			},
+			{
+				"command": "cline.startPreviewServer",
+				"title": "Start Component Preview Server",
+				"category": "DLD"
+			},
+			{
+				"command": "cline.stopPreviewServer",
+				"title": "Stop Component Preview Server",
+				"category": "DLD"
+			},
+			{
+				"command": "cline.togglePreviewServer",
+				"title": "Toggle Component Preview Server",
+				"category": "DLD"
+			},
+			{
+				"command": "cline.setTestComponent",
+				"title": "Load Test Component in Preview",
+				"category": "DLD"
+			},
+			{
+				"command": "cline.previewSampleButton",
+				"title": "Preview Sample Button Component",
+				"category": "DLD"
 			}
 		],
 		"keybindings": [
@@ -320,6 +345,8 @@
 		"dev:webview": "cd webview-ui-alt && npm run dev",
 		"build:webview": "cd webview-ui-alt && npm run build",
 		"test:webview": "cd webview-ui-alt && npm run test",
+		"preview:webpack": "TS_NODE_PROJECT=tsconfig.json webpack serve --config src/preview/webpack.config.ts --mode development",
+		"test:webpack": "node test-webpack.js",
 		"publish:marketplace": "vsce publish && ovsx publish",
 		"publish:marketplace:prerelease": "vsce publish --pre-release && ovsx publish --pre-release",
 		"prepare": "husky",
@@ -331,6 +358,10 @@
 		"report-issue": "node scripts/report-issue.js"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.27.4",
+		"@babel/preset-env": "^7.27.2",
+		"@babel/preset-react": "^7.27.1",
+		"@babel/preset-typescript": "^7.27.1",
 		"@changesets/cli": "^2.27.12",
 		"@types/chai": "^5.0.1",
 		"@types/clone-deep": "^4.0.4",
@@ -344,13 +375,17 @@
 		"@types/sinon": "^17.0.4",
 		"@types/turndown": "^5.0.5",
 		"@types/vscode": "^1.84.0",
+		"@types/webpack": "^5.28.5",
+		"@types/webpack-dev-server": "^4.7.1",
 		"@typescript-eslint/eslint-plugin": "^7.14.1",
 		"@typescript-eslint/parser": "^7.18.0",
 		"@typescript-eslint/utils": "^8.33.0",
 		"@vscode/test-cli": "^0.0.10",
 		"@vscode/test-electron": "^2.4.1",
+		"babel-loader": "^10.0.0",
 		"chai": "^4.3.10",
 		"chalk": "^5.3.0",
+		"css-loader": "^7.1.2",
 		"esbuild": "^0.25.0",
 		"eslint": "^8.57.0",
 		"eslint-plugin-eslint-rules": "file:eslint-rules",
@@ -363,10 +398,14 @@
 		"proxyquire": "^2.1.3",
 		"should": "^13.2.3",
 		"sinon": "^19.0.2",
+		"style-loader": "^4.0.0",
 		"ts-node": "^10.9.2",
 		"ts-proto": "^2.6.1",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.4.5"
+		"typescript": "^5.4.5",
+		"webpack": "^5.99.9",
+		"webpack-cli": "^6.0.1",
+		"webpack-dev-server": "^5.2.2"
 	},
 	"dependencies": {
 		"@anthropic-ai/bedrock-sdk": "^0.12.4",
@@ -424,6 +463,8 @@
 		"posthog-node": "^4.8.1",
 		"puppeteer-chromium-resolver": "^23.0.0",
 		"puppeteer-core": "^23.4.0",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
 		"serialize-error": "^11.0.3",
 		"simple-git": "^3.27.0",
 		"strip-ansi": "^7.1.0",

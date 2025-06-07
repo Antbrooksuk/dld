@@ -207,7 +207,7 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; font-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https:; connect-src https: wss:;">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; font-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https:; connect-src https: wss: http://localhost:*; frame-src http://localhost:*;">
             <title>Cline ${isInSidebar ? 'Settings' : 'Chat'}</title>
             
             <link rel="stylesheet" type="text/css" href="${styleUri}">
@@ -276,6 +276,7 @@ export class AltWebviewProvider implements vscode.WebviewViewProvider {
             `img-src ${webview.cspSource} https: data:`,
             `script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
             `connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
+            `frame-src http://localhost:*`,
         ]
 
         // Get the current isInSidebar value

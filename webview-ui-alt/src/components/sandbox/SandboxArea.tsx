@@ -51,6 +51,21 @@ const PreviewContainer = styled.div`
   background-color: white;
 `;
 
+const IframeContainer = styled.div`
+  width: 100%;
+  height: 300px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+`;
+
+const PreviewIframe = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border: none;
+`;
+
 const PropList = styled.div`
   margin-top: 20px;
   width: 100%;
@@ -93,6 +108,15 @@ const SandboxArea: React.FC<SandboxAreaProps> = () => {
   
   // Props for the current component
   const [props, setProps] = useState<Prop[]>([]);
+  
+  // Toggle between iframe preview and direct rendering
+  const [useIframePreview, setUseIframePreview] = useState<boolean>(false);
+  
+  // Test different iframe sources
+  const [iframeTestUrl, setIframeTestUrl] = useState<string>('http://localhost:9132');
+  
+  // Force iframe reload by adding a timestamp
+  const [iframeKey, setIframeKey] = useState<number>(Date.now());
   
   // Load props for the current component
   useEffect(() => {
@@ -148,10 +172,94 @@ const SandboxArea: React.FC<SandboxAreaProps> = () => {
     <SandboxContainer>
       <Header>
         <Title>Component Preview</Title>
-        <ComponentName>{currentComponent}</ComponentName>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button 
+            onClick={() => setUseIframePreview(!useIframePreview)}
+            style={{
+              padding: '4px 8px',
+              fontSize: '12px',
+              backgroundColor: useIframePreview ? '#0078d4' : '#f0f0f0',
+              color: useIframePreview ? 'white' : 'black',
+              border: '1px solid #ccc',
+              borderRadius: '3px',
+              cursor: 'pointer'
+            }}
+          >
+            {useIframePreview ? 'iframe' : 'direct'}
+          </button>
+          <button 
+            onClick={() => setIframeTestUrl('https://httpbin.org/html')}
+            style={{
+              padding: '4px 8px',
+              fontSize: '10px',
+              backgroundColor: '#f0f0f0',
+              color: 'black',
+              border: '1px solid #ccc',
+              borderRadius: '3px',
+              cursor: 'pointer'
+            }}
+          >
+            Test HTTPS
+          </button>
+          <button 
+            onClick={() => {
+              setIframeTestUrl('http://localhost:9132');
+              setIframeKey(Date.now()); // Force reload
+            }}
+            style={{
+              padding: '4px 8px',
+              fontSize: '10px',
+              backgroundColor: '#f0f0f0',
+              color: 'black',
+              border: '1px solid #ccc',
+              borderRadius: '3px',
+              cursor: 'pointer'
+            }}
+          >
+            Test Local
+          </button>
+          <button 
+            onClick={() => setIframeKey(Date.now())}
+            style={{
+              padding: '4px 8px',
+              fontSize: '10px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: '1px solid #4CAF50',
+              borderRadius: '3px',
+              cursor: 'pointer'
+            }}
+          >
+            Reload
+          </button>
+          <ComponentName>{currentComponent}</ComponentName>
+        </div>
       </Header>
       <PreviewContainer>
-        {renderComponent()}
+        {useIframePreview ? (
+          <IframeContainer>
+            <PreviewIframe 
+              key={iframeKey}
+              src={iframeTestUrl}
+              title="Component Preview"
+              onLoad={() => console.log('iframe loaded successfully')}
+              onError={(e) => console.error('iframe error:', e)}
+            />
+            <div style={{
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              background: 'yellow',
+              padding: '5px',
+              fontSize: '12px',
+              zIndex: 1000
+            }}>
+              iframe src: {iframeTestUrl}
+            </div>
+          </IframeContainer>
+        ) : (
+          renderComponent()
+        )}
         
         <PropList>
           <PropListHeader>Component Props</PropListHeader>
