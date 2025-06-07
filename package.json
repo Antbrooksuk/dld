@@ -46,31 +46,6 @@
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "claude-dev-Alt-ActivityBar",
-					"title": "Cline",
-					"icon": "assets/icons/icon.svg",
-					"when": "isMac"
-				},
-				{
-					"id": "claude-dev-Alt-ActivityBar",
-					"title": "Cline",
-					"icon": "assets/icons/icon.svg",
-					"when": "!isMac"
-				}
-			]
-		},
-		"views": {
-			"claude-dev-Alt-ActivityBar": [
-				{
-					"type": "webview",
-					"id": "claude-dev.AltSidebarProvider",
-					"name": "Cline"
-				}
-			]
-		},
 		"commands": [
 			{
 				"command": "cline.plusButtonClicked",
@@ -186,38 +161,6 @@
 			}
 		],
 		"menus": {
-			"view/title": [
-				{
-					"command": "cline.plusButtonClicked",
-					"group": "navigation@1",
-					"when": "view == claude-dev.AltSidebarProvider"
-				},
-				{
-					"command": "cline.mcpButtonClicked",
-					"group": "navigation@2",
-					"when": "view == claude-dev.AltSidebarProvider"
-				},
-				{
-					"command": "cline.historyButtonClicked",
-					"group": "navigation@3",
-					"when": "view == claude-dev.AltSidebarProvider"
-				},
-				{
-					"command": "cline.popoutButtonClicked",
-					"group": "navigation@4",
-					"when": "view == claude-dev.AltSidebarProvider"
-				},
-				{
-					"command": "cline.accountButtonClicked",
-					"group": "navigation@5",
-					"when": "view == claude-dev.AltSidebarProvider"
-				},
-				{
-					"command": "cline.settingsButtonClicked",
-					"group": "navigation@6",
-					"when": "view == claude-dev.AltSidebarProvider"
-				}
-			],
 			"editor/title": [
 				{
 					"command": "cline.plusButtonClicked",
