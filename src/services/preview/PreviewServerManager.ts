@@ -88,10 +88,24 @@ export class PreviewServerManager {
 					host: this.host,
 					strictPort: true,
 					open: false,
+					cors: true,
+					hmr: {
+						overlay: false,
+					},
+					fs: {
+						// Allow serving files from outside the root
+						allow: ["..", "/Users/an.brooks/Projects/dld-skeleton"],
+					},
 				},
 				css: {
 					postcss: {
 						plugins: [(await import("@tailwindcss/postcss")).default()],
+					},
+				},
+				resolve: {
+					extensions: [".js", ".jsx", ".ts", ".tsx"],
+					alias: {
+						"@dld-skeleton": "/Users/an.brooks/Projects/dld-skeleton/src",
 					},
 				},
 			})
@@ -352,19 +366,35 @@ export class PreviewServerManager {
 			"black",
 			"white",
 		]
-		
+
 		// Filter custom colors to only include valid color names (not semantic tokens)
-		const validCustomColors = Array.from(allCustomColors).filter(color => {
+		const validCustomColors = Array.from(allCustomColors).filter((color) => {
 			// Exclude semantic tokens and system colors
-			const semanticTokens = ['background', 'foreground', 'card', 'popover', 'primary', 'secondary', 'muted', 'accent', 'destructive', 'border', 'input', 'ring', 'sidebar']
-			const invalidPatterns = ['color-', 'font-', 'size-', 'family-']
-			
-			return !semanticTokens.includes(color) && 
-				   !invalidPatterns.some(pattern => color.startsWith(pattern)) &&
-				   color.length > 0 &&
-				   /^[a-zA-Z][a-zA-Z0-9-]*$/.test(color)
+			const semanticTokens = [
+				"background",
+				"foreground",
+				"card",
+				"popover",
+				"primary",
+				"secondary",
+				"muted",
+				"accent",
+				"destructive",
+				"border",
+				"input",
+				"ring",
+				"sidebar",
+			]
+			const invalidPatterns = ["color-", "font-", "size-", "family-"]
+
+			return (
+				!semanticTokens.includes(color) &&
+				!invalidPatterns.some((pattern) => color.startsWith(pattern)) &&
+				color.length > 0 &&
+				/^[a-zA-Z][a-zA-Z0-9-]*$/.test(color)
+			)
 		})
-		
+
 		// Create unique color list
 		const allColors = [...new Set([...standardColors, ...validCustomColors])]
 

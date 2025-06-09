@@ -40,6 +40,34 @@ root.render(<App />);
 	}
 
 	/**
+	 * Generate a test template for debugging
+	 */
+	static generateTestTemplate(message?: string): string {
+		return `
+import React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import './tailwind.css';
+
+// Test component
+const TestComponent = () => {
+  return (
+    <div className="p-5 min-h-screen flex items-center justify-center font-sans">
+      <div className="bg-blue-100 p-4 rounded">
+        <h1 className="text-xl font-bold">Test Component</h1>
+        <p className="text-gray-600">${message || 'Preview server is working!'}</p>
+      </div>
+    </div>
+  );
+};
+
+// Use React 18+ createRoot API
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(<TestComponent />);
+`
+	}
+
+	/**
 	 * Generate JSX props for the component
 	 */
 	private static generateJSXProps(props: Prop[]): string {
