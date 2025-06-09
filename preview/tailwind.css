@@ -1,36 +1,226 @@
 @import "tailwindcss";
 @import "../../dld-skeleton/src/theme/theme.css";
 
-/* Include common utility patterns used in external components */
+/* === COMPREHENSIVE TAILWIND FOUNDATIONS SAFELIST === */
 
-/* Dynamic spacing patterns for discovered custom sizes: 3xl, 4xl */
-@source inline('px-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
-@source inline('py-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
-@source inline('p-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
-@source inline('m-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,3xl,4xl}');
+/* Colors - All variants with all shades */
+@source inline('bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('ring-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('shadow-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('from-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('via-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('to-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('accent-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('caret-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('fill-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('stroke-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('outline-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
 
-/* Dynamic color patterns for discovered custom colors: jet-orange, blue, color-primary, primary */
-@source inline('bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
-@source inline('text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
-@source inline('hover:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
-@source inline('border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,jet-orange,blue,color-primary,primary}-{50,100,200,300,400,500,600,700,800,900,950}');
+/* Color variants with hover, focus, active states */
+@source inline('hover:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('hover:text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('hover:border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('focus:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('focus:text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('focus:border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('focus:ring-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('active:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
 
-/* Dynamic text size patterns for discovered custom sizes: 10xl, massive, giant */
+/* Spacing - All directions and variants */
+@source inline('p-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('px-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('py-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('pt-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('pr-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('pb-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('pl-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('mx-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('my-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('mt-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('mr-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('mb-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('ml-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-mx-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-my-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-mt-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-mr-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-mb-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-ml-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+
+/* Width and Height */
+@source inline('w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('min-w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('min-h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('max-w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('max-h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('w-{full,screen,fit,min,max}');
+@source inline('h-{full,screen,fit,min,max}');
+@source inline('min-w-{full,screen,fit,min,max}');
+@source inline('min-h-{full,screen,fit,min,max}');
+@source inline('max-w-{3xs,2xs,xs,sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,full,screen,fit,min,max,none}');
+@source inline('max-h-{full,screen,fit,min,max}');
+
+/* Positioning */
+@source inline('top-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('right-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('bottom-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('left-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('inset-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('inset-x-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('inset-y-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-top-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-right-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-bottom-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('-left-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+
+/* Typography */
 @source inline('text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
-
-/* Dynamic font patterns for discovered custom fonts: brand, display, custom, size-giant, family-custom */
 @source inline('font-{sans,serif,mono,brand,display,custom,size-giant,family-custom}');
-@source inline('text-{white,black}');
-@source inline('rounded{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
-@source inline('{flex,grid,block,inline,inline-block,inline-flex,inline-grid,hidden}');
-@source inline('{items,justify}-{start,end,center,stretch,between,around,evenly}');
-@source inline('min-h-{screen,full,fit,min,max}');
-@source inline('{fixed,absolute,relative,static,sticky}');
-@source inline('{top,right,bottom,left}-{0,1,2,3,4,5,6,7,8,9,10,11,12,auto}');
-@source inline('bg-opacity-{0,5,10,20,25,30,40,50,60,70,75,80,90,95,100}');
 @source inline('font-{thin,extralight,light,normal,medium,semibold,bold,extrabold,black}');
-@source inline('{sm:,md:,lg:,xl:,2xl:}grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
-@source inline('{sm:,md:,lg:,xl:,2xl:}gap-{0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32}');
+@source inline('leading-{3,4,5,6,7,8,9,10,none,tight,snug,normal,relaxed,loose}');
+@source inline('tracking-{tighter,tight,normal,wide,wider,widest}');
+@source inline('text-{left,center,right,justify,start,end}');
+@source inline('text-{inherit,current,transparent}');
 
-/* Custom utility source patterns for: body-m */
+/* Border radius */
+@source inline('rounded{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-t{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-r{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-b{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-l{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-tl{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-tr{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-br{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+@source inline('rounded-bl{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}');
+
+/* Border width */
+@source inline('border{,-0,-2,-4,-8}');
+@source inline('border-t{,-0,-2,-4,-8}');
+@source inline('border-r{,-0,-2,-4,-8}');
+@source inline('border-b{,-0,-2,-4,-8}');
+@source inline('border-l{,-0,-2,-4,-8}');
+@source inline('border-x{,-0,-2,-4,-8}');
+@source inline('border-y{,-0,-2,-4,-8}');
+
+/* Layout and Display */
+@source inline('{block,inline-block,inline,flex,inline-flex,table,inline-table,table-caption,table-cell,table-column,table-column-group,table-footer-group,table-header-group,table-row-group,table-row,flow-root,grid,inline-grid,contents,list-item,hidden}');
+@source inline('{static,fixed,absolute,relative,sticky}');
+@source inline('{visible,invisible,collapse}');
+@source inline('overflow-{auto,hidden,clip,visible,scroll}');
+@source inline('overflow-x-{auto,hidden,clip,visible,scroll}');
+@source inline('overflow-y-{auto,hidden,clip,visible,scroll}');
+
+/* Flexbox */
+@source inline('flex-{1,auto,initial,none}');
+@source inline('flex-{row,row-reverse,col,col-reverse}');
+@source inline('flex-{wrap,wrap-reverse,nowrap}');
+@source inline('grow{,-0}');
+@source inline('shrink{,-0}');
+@source inline('justify-{normal,start,end,center,between,around,evenly,stretch}');
+@source inline('justify-items-{start,end,center,stretch}');
+@source inline('justify-self-{auto,start,end,center,stretch}');
+@source inline('content-{normal,center,start,end,between,around,evenly,baseline,stretch}');
+@source inline('items-{start,end,center,baseline,stretch}');
+@source inline('self-{auto,start,end,center,stretch,baseline}');
+
+/* Grid */
+@source inline('grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12,none,subgrid}');
+@source inline('grid-rows-{1,2,3,4,5,6,7,8,9,10,11,12,none,subgrid}');
+@source inline('col-{auto,span-1,span-2,span-3,span-4,span-5,span-6,span-7,span-8,span-9,span-10,span-11,span-12,span-full}');
+@source inline('row-{auto,span-1,span-2,span-3,span-4,span-5,span-6,span-7,span-8,span-9,span-10,span-11,span-12,span-full}');
+@source inline('col-start-{1,2,3,4,5,6,7,8,9,10,11,12,13,auto}');
+@source inline('col-end-{1,2,3,4,5,6,7,8,9,10,11,12,13,auto}');
+@source inline('row-start-{1,2,3,4,5,6,7,8,9,10,11,12,13,auto}');
+@source inline('row-end-{1,2,3,4,5,6,7,8,9,10,11,12,13,auto}');
+@source inline('gap-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('gap-x-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('gap-y-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+
+/* Shadows and Effects */
+@source inline('shadow{,-xs,-sm,-md,-lg,-xl,-2xl,-inner,-none}');
+@source inline('drop-shadow{,-xs,-sm,-md,-lg,-xl,-2xl,-none}');
+@source inline('blur{,-none,-sm,-md,-lg,-xl,-2xl,-3xl}');
+@source inline('brightness-{0,50,75,90,95,100,105,110,125,150,200}');
+@source inline('contrast-{0,50,75,100,125,150,200}');
+@source inline('grayscale{,-0}');
+@source inline('hue-rotate-{0,15,30,60,90,180}');
+@source inline('invert{,-0}');
+@source inline('saturate-{0,50,100,150,200}');
+@source inline('sepia{,-0}');
+
+/* Opacity */
+@source inline('opacity-{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100}');
+@source inline('bg-opacity-{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100}');
+@source inline('text-opacity-{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100}');
+@source inline('border-opacity-{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100}');
+
+/* Z-index */
+@source inline('z-{0,10,20,30,40,50,auto}');
+@source inline('-z-{0,10,20,30,40,50}');
+
+/* Responsive breakpoints for all utilities */
+
+@source inline('sm:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
+@source inline('sm:gap-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('sm:p-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('sm:m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('sm:text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
+@source inline('sm:w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('sm:h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('sm:{block,inline-block,inline,flex,inline-flex,grid,inline-grid,hidden}');
+@source inline('sm:flex-{row,row-reverse,col,col-reverse}');
+@source inline('md:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
+@source inline('md:gap-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('md:p-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('md:m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('md:text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
+@source inline('md:w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('md:h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('md:{block,inline-block,inline,flex,inline-flex,grid,inline-grid,hidden}');
+@source inline('md:flex-{row,row-reverse,col,col-reverse}');
+@source inline('lg:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
+@source inline('lg:gap-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('lg:p-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('lg:m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('lg:text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
+@source inline('lg:w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('lg:h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('lg:{block,inline-block,inline,flex,inline-flex,grid,inline-grid,hidden}');
+@source inline('lg:flex-{row,row-reverse,col,col-reverse}');
+@source inline('xl:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
+@source inline('xl:gap-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('xl:p-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('xl:m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('xl:text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
+@source inline('xl:w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('xl:h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('xl:{block,inline-block,inline,flex,inline-flex,grid,inline-grid,hidden}');
+@source inline('xl:flex-{row,row-reverse,col,col-reverse}');
+@source inline('2xl:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}');
+@source inline('2xl:gap-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('2xl:p-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('2xl:m-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('2xl:text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl,10xl,massive,giant}');
+@source inline('2xl:w-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('2xl:h-{0,px,1,2,3,4,5,6,7,8,9,10,11,12,14,16,20,24,28,32,36,40,44,48,52,56,60,64,72,80,96,auto,3xl,4xl}');
+@source inline('2xl:{block,inline-block,inline,flex,inline-flex,grid,inline-grid,hidden}');
+@source inline('2xl:flex-{row,row-reverse,col,col-reverse}');
+
+/* Custom utilities from theme files */
 @source inline('{body-m}');
+
+/* Dark mode variants for key utilities */
+@source inline('dark:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('dark:text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('dark:border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+
+/* State variants for interactivity */
+@source inline('group-hover:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('peer-focus:bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone,black,white,jet-orange}-{50,100,200,300,400,500,600,700,800,900,950}');
+@source inline('disabled:opacity-{50,75}');
+@source inline('disabled:bg-{gray,slate,zinc,neutral,stone}-{100,200,300}');

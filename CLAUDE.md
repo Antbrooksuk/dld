@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Developer-Led Design (DLD)** is a VSCode extension forked from Cline that enables developers to generate and iterate on component and journey alternatives directly in code. The goal is to disrupt traditional design-to-development workflows by enabling code-native design iteration using AI and established design systems (Tailwind themes).
 
+### Key Code Development Requirements
+- Don't summarize changes made.
+- Never use apologies.
+- Avoid giving feedback about understanding in comments or documentation.
+- Don't invent changes other than what's explicitly requested.
+- Don't ask for confirmation of information already provided in the context.
+- Don't suggest updates or changes to files when there are no actual modifications needed.
+
 ### Key Product Vision
 - Generate production-ready React components using shadcn/ui + Radix + CVA patterns
 - Create design alternatives for stakeholder review without leaving VSCode
@@ -30,26 +38,9 @@ npm run package            # Production build
 npm run protos             # Generate protobuf code + service configs (run after .proto changes)
 ```
 
-### Testing
-```bash
-npm run test               # Run all tests (unit + integration)
-npm run test:unit          # Unit tests with Mocha
-npm run test:integration   # VS Code extension tests
-npm run test:webview       # React component tests with Vitest
-npm run test:ci            # CI-specific test runner
-```
-
-### Code Quality
-```bash
-npm run lint               # ESLint for src + webview
-npm run format:fix         # Auto-fix Prettier formatting
-npm run check-types        # TypeScript type checking
-```
-
 ### Development Workflow
 - Use `F5` in VS Code to launch extension in debug mode
 - Use `npm run dev:webview` for frontend development
-- Run `npm run protos` after updating any .proto files
 
 ## Architecture Overview
 
@@ -80,18 +71,10 @@ npm run check-types        # TypeScript type checking
 - Model Context Protocol (MCP) server support
 - Sophisticated context management for AI conversations
 
-### Testing Architecture
-- **Unit tests**: Mocha + TypeScript for core logic
-- **Integration tests**: VS Code Test API for extension features
-- **Frontend tests**: Vitest + React Testing Library
-- **Custom ESLint rules**: Dedicated package in eslint-rules/
-
 ### DLD-Specific Development Notes
 - This codebase is a fork of Cline being adapted for design tool functionality
 - Focus on component generation patterns using shadcn/ui + Radix + CVA
 - Tailwind theme integration is critical for design system foundations
-- Always run `npm run protos` after modifying .proto files
-- Use `npm run watch` for active development
 - Extension uses ESM modules, tests use CommonJS
 - The webview and extension have separate build processes
 - All gRPC service handlers in core/controller/ are auto-generated
@@ -234,19 +217,7 @@ any-project/
 
 ## Preview System Implementation - Problems Solved
 
-### Migration from Webpack to Vite
-
-#### 1. **React 19 API Compatibility**
-**Problem**: `ReactDOM.render` is deprecated in React 19
-**Solution**: Updated to use `createRoot` API in ComponentTemplateGenerator
-```javascript
-// Generated template uses modern React API
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(<App />);
-```
-
-#### 2. **Tailwind 4 @source Directive Integration**
+#### 1. **Tailwind 4 @source Directive Integration**
 **Problem**: Traditional safelist approach is inefficient for dynamic themes
 **Solution**: Implemented dynamic @source pattern generation
 ```typescript
@@ -256,7 +227,7 @@ root.render(<App />);
 @source inline('{${utilityNames.join(',')}}');
 ```
 
-#### 3. **Generic Workspace Support**
+#### 2. **Generic Workspace Support**
 **Problem**: Hardcoded project paths like `@dld-skeleton` break universality
 **Solution**: Dynamic relative path calculation for any workspace
 ```typescript
@@ -266,7 +237,7 @@ const relativePath = path.relative(previewRoot, componentPath);
 // Results in: "../../any-project/src/components/Button/Button.tsx"
 ```
 
-#### 4. **Theme Detection and Hot Reloading**
+#### 3. **Theme Detection and Hot Reloading**
 **Problem**: No automatic detection of theme changes across different projects
 **Solution**: File watcher system with CSS parsing
 ```typescript
@@ -275,7 +246,7 @@ const themeFolderPath = path.join(workspacePath, 'src', 'theme');
 this.themeWatcher = fs.watch(themeFolderPath, { recursive: true }, ...);
 ```
 
-#### 5. **@layer base Compilation Conflicts**
+#### 4. **@layer base Compilation Conflicts**
 **Problem**: @layer base blocks cause 500 errors with @source patterns
 **Temporary Solution**: Remove @layer base from theme files during parsing
 **Long-term**: Need to investigate Tailwind 4 layer processing order

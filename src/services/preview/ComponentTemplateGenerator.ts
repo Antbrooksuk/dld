@@ -119,28 +119,4 @@ root.render(<App />);
 		const relativePath = require("path").relative(previewRoot, componentPath)
 		return relativePath
 	}
-
-	/**
-	 * Generate a simple test template for debugging
-	 */
-	static generateTestTemplate(message: string = "Component Preview Ready"): string {
-		return `
-import React from 'react';
-import * as ReactDOM from 'react-dom/client';
-import './tailwind.css';
-
-const TestComponent = () => {
-  return (
-    <div className="p-10 text-center font-sans bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-lg shadow-lg">
-      <h2 className="mb-2 text-2xl font-bold">${message}</h2>
-      <p className="opacity-90">Dynamic entry point generation is working!</p>
-    </div>
-  );
-};
-
-const container = document.getElementById('root');
-const root = ReactDOM.createRoot(container);
-root.render(<TestComponent />);
-`
-	}
 }
