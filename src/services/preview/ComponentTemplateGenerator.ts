@@ -10,13 +10,13 @@ export class ComponentTemplateGenerator {
 	 */
 	static generateTemplate(componentPath: string, componentName: string, props: Prop[] = [], extensionPath?: string): string {
 		// Convert absolute paths to relative paths from preview folder
-		const importPath = this.convertToRelativePath(componentPath, extensionPath);
-		
-		// Generate the template using React 19+ createRoot API
-		// Use named export to match filename convention
+		const importPath = this.convertToRelativePath(componentPath, extensionPath)
+
+		// Generate the template using React 18+ createRoot API
+		// Use ReactDOM namespace import style for better compatibility
 		return `
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import * as ReactDOM from 'react-dom/client';
 import './tailwind.css';
 import { ${componentName} } from "${importPath}";
 
@@ -34,7 +34,7 @@ const App = () => {
 
 // Use React 18+ createRoot API
 const container = document.getElementById('root');
-const root = createRoot(container);
+const root = ReactDOM.createRoot(container);
 root.render(<App />);
 `
 	}
@@ -112,12 +112,12 @@ root.render(<App />);
 	 */
 	private static convertToRelativePath(componentPath: string, extensionPath?: string): string {
 		if (!extensionPath) {
-			return componentPath; // Fallback to original path
+			return componentPath // Fallback to original path
 		}
-		
-		const previewRoot = require('path').resolve(extensionPath, 'preview');
-		const relativePath = require('path').relative(previewRoot, componentPath);
-		return relativePath;
+
+		const previewRoot = require("path").resolve(extensionPath, "preview")
+		const relativePath = require("path").relative(previewRoot, componentPath)
+		return relativePath
 	}
 
 	/**
@@ -126,7 +126,7 @@ root.render(<App />);
 	static generateTestTemplate(message: string = "Component Preview Ready"): string {
 		return `
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import * as ReactDOM from 'react-dom/client';
 import './tailwind.css';
 
 const TestComponent = () => {
@@ -139,7 +139,7 @@ const TestComponent = () => {
 };
 
 const container = document.getElementById('root');
-const root = createRoot(container);
+const root = ReactDOM.createRoot(container);
 root.render(<TestComponent />);
 `
 	}
