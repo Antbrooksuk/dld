@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({ include: "**/*.{jsx,tsx}" })],
   server: {
     port: 5174,
     host: 'localhost',
@@ -13,7 +13,7 @@ export default defineConfig({
     },
     fs: {
       // Allow serving files from outside the root
-      allow: ['..', '/Users/an.brooks/Projects/dld-skeleton']
+      allow: ['..', '/Users/an.brooks/Projects']
     }
   },
   css: {
@@ -24,10 +24,7 @@ export default defineConfig({
     }
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    alias: {
-      '@dld-skeleton': '/Users/an.brooks/Projects/dld-skeleton/src'
-    }
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
   build: {
     outDir: 'dist',

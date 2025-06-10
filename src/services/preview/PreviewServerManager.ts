@@ -88,24 +88,10 @@ export class PreviewServerManager {
 					host: this.host,
 					strictPort: true,
 					open: false,
-					cors: true,
-					hmr: {
-						overlay: false,
-					},
-					fs: {
-						// Allow serving files from outside the root
-						allow: ["..", "/Users/an.brooks/Projects/dld-skeleton"],
-					},
 				},
 				css: {
 					postcss: {
 						plugins: [(await import("@tailwindcss/postcss")).default()],
-					},
-				},
-				resolve: {
-					extensions: [".js", ".jsx", ".ts", ".tsx"],
-					alias: {
-						"@dld-skeleton": "/Users/an.brooks/Projects/dld-skeleton/src",
 					},
 				},
 			})
